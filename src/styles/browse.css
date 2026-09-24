@@ -404,13 +404,15 @@ html.gt-shorts-active
 
 /* The Shorts page is sized for YouTube's masthead; with it hidden, fill the whole viewport. */
 html.gt-shorts-active ytd-shorts {
+  box-sizing: border-box;
   top: 0 !important;
   height: 100vh !important;
   margin-top: 0 !important;
+  padding-top: 24px;
 }
 
 html.gt-shorts-active ytd-shorts :is(#shorts-container, #shorts-panel-container) {
-  height: 100vh !important;
+  height: 100% !important;
   max-height: none !important;
 }
 

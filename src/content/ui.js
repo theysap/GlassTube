@@ -80,7 +80,12 @@
     );
     el.classList.add(`gt-card-${variant}`);
     if (item.selected) el.classList.add('gt-card-current');
-    return GT.linkify(el, item.channelId ? { channelId: item.channelId } : undefined);
+    const meta = item.endpoint
+      ? { endpoint: item.endpoint }
+      : item.channelId
+        ? { channelId: item.channelId }
+        : undefined;
+    return GT.linkify(el, meta);
   };
 
   // ── Rows ────────────────────────────────────────────────────────────────

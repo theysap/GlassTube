@@ -139,11 +139,9 @@
       if (t) watchEndpoint.startTimeSeconds = t;
       return cmd('WEB_PAGE_TYPE_WATCH', 3832, { watchEndpoint });
     }
-    if (u.pathname.startsWith('/shorts/')) {
-      return cmd('WEB_PAGE_TYPE_SHORTS', 37414, {
-        reelWatchEndpoint: { videoId: u.pathname.split('/')[2] },
-      });
-    }
+    // A bare /shorts/ID endpoint opens a single, unscrollable Short; without YouTube's own
+    // endpoint (with its sequence params) a full page load gives the proper Shorts feed.
+    if (u.pathname.startsWith('/shorts')) return null;
     if (u.pathname === '/results' && u.searchParams.get('search_query')) {
       return cmd('WEB_PAGE_TYPE_SEARCH', 4724, {
         searchEndpoint: { query: u.searchParams.get('search_query') },

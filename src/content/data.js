@@ -244,6 +244,8 @@
       views: text(r.viewCountText),
       thumb: bestImage(r.thumbnail),
       url: `/shorts/${r.videoId}`,
+      // YouTube's own endpoint carries the sequence params that make Shorts scrollable.
+      endpoint: r.navigationEndpoint?.reelWatchEndpoint ? r.navigationEndpoint : null,
     };
   };
 
@@ -259,6 +261,7 @@
       views: text(s.overlayMetadata?.secondaryText),
       thumb: bestImage(s.thumbnail || s.thumbnailViewModel?.thumbnailViewModel?.image),
       url: `/shorts/${id}`,
+      endpoint: s.onTap?.innertubeCommand?.reelWatchEndpoint ? s.onTap.innertubeCommand : null,
     };
   };
 

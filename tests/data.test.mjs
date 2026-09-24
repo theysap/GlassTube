@@ -96,6 +96,8 @@ test('extractFeed separates shelves, skips ads and de-duplicates', () => {
       ['short000002', 'short', '/shorts/short000002'],
     ],
   );
+  // Shorts keep YouTube's endpoint so opening one gives a scrollable sequence.
+  assert.equal(feed.shelves[0].items[0].endpoint.reelWatchEndpoint.videoId, 'short000001');
 });
 
 test('extractWatch returns related videos and the playlist', () => {

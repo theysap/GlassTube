@@ -34,7 +34,9 @@ html.gt-watch-active ytd-watch-flexy #related {
   display: none !important;
 }
 
-html.gt-watch-active ytd-watch-flexy:not(:has(ytd-live-chat-frame)) #secondary {
+html.gt-watch-active
+  ytd-watch-flexy:not(:has(ytd-live-chat-frame:not([collapsed], [hide-chat-frame], [hidden])))
+  #secondary {
   display: none !important;
 }
 
@@ -45,7 +47,9 @@ html.gt-watch-active ytd-watch-flexy #columns {
   padding: 0 var(--gt-gutter);
 }
 
-html.gt-watch-active ytd-watch-flexy:not(:has(ytd-live-chat-frame)) #primary {
+html.gt-watch-active
+  ytd-watch-flexy:not(:has(ytd-live-chat-frame:not([collapsed], [hide-chat-frame], [hidden])))
+  #primary {
   width: 100%;
   min-width: 0 !important;
   max-width: none !important;
