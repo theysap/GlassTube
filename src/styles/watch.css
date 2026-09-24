@@ -647,3 +647,46 @@ html.gt-on .ytp-popup {
   color: #000;
   background: #f5f5f7;
 }
+
+/* ── Picture in Picture ────────────────────────────────────────────────────── */
+.gt-pip-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 65;
+  display: grid;
+  place-items: center;
+  font-family: var(--gt-font);
+  background: radial-gradient(60% 60% at 50% 45%, rgb(60 70 110 / 45%), transparent 70%), #050507;
+}
+
+.gt-pip-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  padding: 30px 40px;
+  border-radius: 30px;
+  color: var(--gt-text);
+  font-size: 18px;
+}
+
+.gt-pip-card > .gt-icon {
+  font-size: 48px;
+  opacity: 0.85;
+}
+
+html.gt-pip-open .gt-controls .gt-glyph {
+  display: none;
+}
+
+.gt-ytp-pip.ytp-button {
+  display: inline-grid !important;
+  place-items: center;
+  vertical-align: top;
+}
+
+.gt-ytp-pip .gt-icon {
+  width: 24px;
+  height: 24px;
+  color: #fff;
+}

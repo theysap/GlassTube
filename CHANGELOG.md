@@ -3,6 +3,15 @@
 All notable changes to GlassTube are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
 
+## [0.4.0] - 2026-09-24
+
+### Added
+
+- **Picture in Picture, redesigned** — the video moves into a Document Picture-in-Picture window with tvOS-style glass controls: −10 s / play-pause / +10 s, a scrubber with elapsed and remaining time, mute, “Back to tab”, a centre glyph and auto-hiding chrome. Keyboard: Space/K, ←/→ (or J/L), M, Esc.
+- The tab shows a glass “Playing in Picture in Picture” card with a Bring Back button; playback continues seamlessly in both directions.
+- `Alt+P` toggles Picture in Picture on the watch page; when GlassTube's controls are off, a PiP button is added to YouTube's own control bar.
+- Falls back to the browser's standard video PiP where Document PiP isn't available.
+
 ## [0.3.0] - 2026-09-24
 
 ### Added
@@ -42,6 +51,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[0.4.0]: https://github.com/theysap/GlassTube/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/theysap/GlassTube/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/theysap/GlassTube/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/theysap/GlassTube/commits/v0.1.0
