@@ -330,6 +330,7 @@ a.gt-row-title:focus-visible {
 
 .gt-row-track {
   display: flex;
+  align-items: flex-start;
   gap: clamp(18px, 1.6vw, 34px);
   padding: 22px var(--gt-right) 26px var(--gt-left);
   overflow: auto hidden;

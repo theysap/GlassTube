@@ -3,6 +3,14 @@
 All notable changes to GlassTube are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
 
+## [0.8.1] - 2026-09-24
+
+### Changed
+
+- Watch page order is now **Up Next → Comments → Shorts**: the comments toggle and panel sit right below the Up Next cards.
+- Shorts from the related list get their own shelf after the comments, so tall portrait cards no longer stretch the Up Next row and leave a gap.
+- Shelves align cards to the top instead of stretching to the tallest card.
+
 ## [0.8.0] - 2026-09-24
 
 ### Added
@@ -103,6 +111,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[0.8.1]: https://github.com/theysap/GlassTube/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/theysap/GlassTube/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/theysap/GlassTube/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/theysap/GlassTube/compare/v0.5.0...v0.6.0

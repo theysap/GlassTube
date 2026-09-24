@@ -12,6 +12,7 @@
   let weEnabledTheater = false;
   let nav = null;
   let shelf = null;
+  let shortsShelf = null;
   let commentsToggle = null;
   let unsub = null;
   let keepAlive = 0;
@@ -75,31 +76,39 @@
         items: w.playlist.items,
       });
     }
-    if (fresh && w.related.length) {
-      rows.push({
-        key: 'upnext',
-        title: 'Up Next',
-        items: w.related.filter((i) => i.id !== currentId()),
-      });
-    }
-    const existing = new Map([...shelf.children].map((c) => [c.dataset.key, c]));
-    const els = rows.map((r) => {
-      const el = existing.get(r.key);
-      if (!el) return GT.ui.row(r);
-      GT.ui.setRowItems(el, r.items);
-      return el;
-    });
-    shelf.replaceChildren(...els);
+    const related = fresh ? w.related.filter((i) => i.id !== currentId()) : [];
+    const shorts = related.filter((i) => i.kind === 'short');
+    const videos = related.filter((i) => i.kind !== 'short');
+    if (videos.length) rows.push({ key: 'upnext', title: 'Up Next', items: videos });
+    // Tall Shorts cards get their own shelf after the comments so Up Next stays compact.
+    const fill = (container, list) => {
+      const existing = new Map([...container.children].map((c) => [c.dataset.key, c]));
+      container.replaceChildren(
+        ...list.map((r) => {
+          const el = existing.get(r.key);
+          if (!el) return GT.ui.row(r);
+          GT.ui.setRowItems(el, r.items);
+          return el;
+        }),
+      );
+    };
+    fill(shelf, rows);
+    fill(shortsShelf, shorts.length ? [{ key: 'shorts', title: 'Shorts', items: shorts }] : []);
     const current = shelf.querySelector('.gt-card-current');
     current?.scrollIntoView({ block: 'nearest', inline: 'center' });
   };
 
+  /** Order below the title: Up Next → Comments (toggle + panel) → Shorts. */
   const placeShelf = () => {
     const meta = document.querySelector('ytd-watch-flexy #below ytd-watch-metadata');
     if (!meta) return false;
     if (shelf.previousElementSibling !== meta) meta.after(shelf);
-    const comments = document.querySelector('ytd-watch-flexy #below #comments');
-    if (comments && commentsToggle.nextElementSibling !== comments) comments.before(commentsToggle);
+    if (commentsToggle.previousElementSibling !== shelf) shelf.after(commentsToggle);
+    const comments = document.querySelector('ytd-watch-flexy #comments');
+    const tail = comments || commentsToggle;
+    if (comments && comments.previousElementSibling !== commentsToggle)
+      commentsToggle.after(comments);
+    if (shortsShelf.previousElementSibling !== tail) tail.after(shortsShelf);
     return true;
   };
 
@@ -134,7 +143,9 @@
     document.body.append(nav);
 
     shelf = h('section#gt-upnext.gt-surface', { 'aria-label': 'Up Next' });
+    shortsShelf = h('section#gt-upnext-shorts.gt-surface', { 'aria-label': 'Shorts' });
     GT.ui.enableTilt(shelf);
+    GT.ui.enableTilt(shortsShelf);
     commentsToggle = h(
       'button.gt-btn.gt-comments-toggle',
       {
@@ -172,8 +183,9 @@
     (mount.cleanup || []).forEach((fn) => fn());
     nav?.remove();
     shelf?.remove();
+    shortsShelf?.remove();
     commentsToggle?.remove();
-    nav = shelf = commentsToggle = null;
+    nav = shelf = shortsShelf = commentsToggle = null;
     restoreTheater();
     root.classList.remove('gt-watch-active', 'gt-comments-open', 'gt-watch-scrolled');
     nudgeLayout();

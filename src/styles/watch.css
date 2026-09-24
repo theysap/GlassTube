@@ -98,7 +98,7 @@ html.gt-watch-active ytd-watch-flexy #below #comments {
 }
 
 .gt-comments-toggle {
-  margin: 28px 0 6px;
+  margin: 4px 0 6px;
 }
 
 .gt-comments-toggle .gt-icon:last-child {
@@ -107,22 +107,29 @@ html.gt-watch-active ytd-watch-flexy #below #comments {
 }
 
 /* Up Next / playlist shelves under the title. */
-#gt-upnext {
+#gt-upnext,
+#gt-upnext-shorts {
   --gt-left: 40px;
   --gt-right: 40px;
 
   margin: 26px -40px 0;
 }
 
-#gt-upnext:empty {
+#gt-upnext:empty,
+#gt-upnext-shorts:empty {
   display: none;
 }
 
-#gt-upnext .gt-row-nav.gt-prev {
+#gt-upnext .gt-row,
+#gt-upnext-shorts .gt-row {
+  margin-bottom: 0;
+}
+
+:is(#gt-upnext, #gt-upnext-shorts) .gt-row-nav.gt-prev {
   left: 4px;
 }
 
-#gt-upnext .gt-row-nav.gt-next {
+:is(#gt-upnext, #gt-upnext-shorts) .gt-row-nav.gt-next {
   right: 4px;
 }
 

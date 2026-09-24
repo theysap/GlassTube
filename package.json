@@ -1,6 +1,6 @@
 {
   "name": "glasstube",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "description": "A Chrome extension that reimagines YouTube with a cinematic, Apple TV-inspired Liquid Glass interface.",
   "license": "MIT",
