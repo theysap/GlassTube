@@ -12,6 +12,8 @@ A Chrome extension that turns youtube.com into a cinematic, Apple TV–inspired 
 [![Manifest V3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/mv3/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 
+📖 **[Read the user manual](USERMANUAL.md)** — every option explained, known issues and how to report a problem.
+
 <img src="docs/screenshots/home.jpg" alt="GlassTube home screen — a Top Shelf hero above shelves of videos" width="100%" />
 
 </div>
@@ -20,6 +22,7 @@ A Chrome extension that turns youtube.com into a cinematic, Apple TV–inspired 
 
 ## Contents
 
+- [User manual](USERMANUAL.md)
 - [Highlights](#highlights)
 - [Screenshots](#screenshots)
 - [Install](#install)
@@ -235,7 +238,7 @@ GlassTube collects nothing: no analytics, no telemetry, no remote code, no third
 
 ## Contributing
 
-Issues and pull requests are welcome — please use the templates. Before opening a PR run `npm run check`, try the pages you touched with `npm run smoke`, bump the version and add a changelog entry.
+Found a bug? See [How to report an issue](USERMANUAL.md#how-to-report-an-issue) in the user manual. Issues and pull requests are welcome — please use the templates. Before opening a PR run `npm run check`, try the pages you touched with `npm run smoke`, bump the version and add a changelog entry.
 
 ## License & trademarks
 

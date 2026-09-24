@@ -59,6 +59,28 @@ body {
   margin-bottom: 16px;
 }
 
+.manual {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgb(191 164 255 / 18%);
+  border: 1px solid rgb(191 164 255 / 35%);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.manual:hover,
+.manual:focus-visible {
+  color: #000;
+  background: #d9ccff;
+  outline: none;
+}
+
 .logo {
   border-radius: 10px;
   box-shadow: 0 8px 20px -6px rgb(0 0 0 / 70%);
