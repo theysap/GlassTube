@@ -12,7 +12,25 @@
     else document.addEventListener('DOMContentLoaded', resolve, { once: true });
   });
 
+  // GlassTube is a dark interface: switch YouTube's own components to their dark theme too,
+  // and hand the page back untouched when GlassTube is turned off.
+  let addedDark = false;
+  const applyDark = (on) => {
+    if (on && !root.hasAttribute('dark')) {
+      root.setAttribute('dark', 'true');
+      addedDark = true;
+    } else if (!on && addedDark) {
+      root.removeAttribute('dark');
+      addedDark = false;
+    }
+  };
+  new MutationObserver(() => applyDark(GT.settings.enabled)).observe(root, {
+    attributes: true,
+    attributeFilter: ['dark'],
+  });
+
   const applyClasses = (s, route) => {
+    applyDark(s.enabled);
     root.classList.toggle('gt-on', s.enabled);
     root.classList.toggle('gt-solid', s.enabled && s.reduceTransparency);
     for (const cls of [...root.classList]) {

@@ -474,12 +474,12 @@ a.gt-row-title:focus-visible {
 }
 
 .gt-card:focus-visible,
-.gt-layer:not(.gt-kbd) .gt-card:hover {
+.gt-surface:not(.gt-kbd) .gt-card:hover {
   z-index: 2;
 }
 
 .gt-card:focus-visible .gt-card-art,
-.gt-layer:not(.gt-kbd) .gt-card:hover .gt-card-art {
+.gt-surface:not(.gt-kbd) .gt-card:hover .gt-card-art {
   box-shadow:
     0 34px 60px -20px rgb(0 0 0 / 90%),
     0 0 0 1px rgb(255 255 255 / 10%);
@@ -488,7 +488,7 @@ a.gt-row-title:focus-visible {
 }
 
 .gt-card:focus-visible .gt-glare,
-.gt-layer:not(.gt-kbd) .gt-card:hover .gt-glare {
+.gt-surface:not(.gt-kbd) .gt-card:hover .gt-glare {
   opacity: 1;
 }
 
@@ -549,7 +549,7 @@ a.gt-row-title:focus-visible {
 }
 
 .gt-card:focus-visible .gt-card-info,
-.gt-layer:not(.gt-kbd) .gt-card:hover .gt-card-info {
+.gt-surface:not(.gt-kbd) .gt-card:hover .gt-card-info {
   transform: translateY(calc((var(--gt-focus-scale) - 1) * 50%));
 }
 
@@ -567,7 +567,7 @@ a.gt-row-title:focus-visible {
 }
 
 .gt-card:focus-visible .gt-card-title,
-.gt-layer:not(.gt-kbd) .gt-card:hover .gt-card-title {
+.gt-surface:not(.gt-kbd) .gt-card:hover .gt-card-title {
   color: var(--gt-text);
 }
 

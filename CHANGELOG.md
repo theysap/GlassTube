@@ -3,6 +3,20 @@
 All notable changes to GlassTube are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
 
+## [0.3.0] - 2026-09-24
+
+### Added
+
+- **Cinematic watch page** — the player fills the screen (theater mode stretched to full height), YouTube's masthead steps aside and a floating glass pill offers Home and Search.
+- **tvOS player controls** — glass capsule buttons (−10 s, play/pause, +10 s, next, volume with slider, captions, playback speed menu, settings, Picture in Picture, full screen), a thick scrubber with storyboard thumbnail previews, elapsed / remaining time, a LIVE pill, a centre glyph on play/pause/skip and auto-hide with the cursor. YouTube's own controls return during ads.
+- Up Next and playlist shelves under the title, a glass description card and comments tucked behind a glass toggle.
+- Storyboard spec parser (with tests) for scrub previews.
+
+### Changed
+
+- Page data now comes from YouTube's `yt-navigate-finish` payloads and live renderer data, which also covers back/forward navigation and the home feed paging in.
+- YouTube's own components are switched to their dark theme while GlassTube is on; filled buttons (Subscribe) keep readable contrast.
+
 ## [0.2.0] - 2026-09-24
 
 ### Added
@@ -28,5 +42,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[0.3.0]: https://github.com/theysap/GlassTube/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/theysap/GlassTube/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/theysap/GlassTube/commits/v0.1.0

@@ -1,0 +1,649 @@
+/*
+ * GlassTube — cinematic watch page and tvOS player controls.
+ */
+
+/* ── Cinematic layout ──────────────────────────────────────────────────────── */
+html.gt-watch-active ytd-app {
+  --ytd-masthead-height: 0px !important;
+}
+
+html.gt-watch-active #masthead-container.ytd-app {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-110%);
+}
+
+html.gt-watch-active ytd-page-manager#page-manager {
+  margin-top: 0 !important;
+}
+
+html.gt-watch-active ytd-watch-flexy[theater] #full-bleed-container,
+html.gt-watch-active ytd-watch-flexy[full-bleed-player] #full-bleed-container {
+  height: 100vh !important;
+  min-height: 0 !important;
+  max-height: 100vh !important;
+  background: #000 !important;
+}
+
+html.gt-watch-active ytd-watch-flexy #cinematics,
+html.gt-watch-active ytd-watch-flexy #cinematics-container {
+  display: none !important;
+}
+
+html.gt-watch-active ytd-watch-flexy #related {
+  display: none !important;
+}
+
+html.gt-watch-active ytd-watch-flexy:not(:has(ytd-live-chat-frame)) #secondary {
+  display: none !important;
+}
+
+html.gt-watch-active ytd-watch-flexy #columns {
+  box-sizing: border-box;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--gt-gutter);
+}
+
+html.gt-watch-active ytd-watch-flexy:not(:has(ytd-live-chat-frame)) #primary {
+  width: 100%;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-top: 36px !important;
+}
+
+html.gt-watch-active ytd-watch-metadata #title h1 {
+  font-size: clamp(26px, 2.4vw, 42px) !important;
+  font-weight: 800 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.022em !important;
+}
+
+html.gt-watch-active ytd-watch-metadata #owner #avatar {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+html.gt-watch-active ytd-watch-metadata #owner ytd-channel-name {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+}
+
+html.gt-watch-active ytd-watch-metadata #description {
+  margin-top: 20px !important;
+  padding: 6px 4px !important;
+  border: 1px solid var(--gt-glass-border) !important;
+  border-radius: 22px !important;
+  background: var(--gt-glass) !important;
+  backdrop-filter: var(--gt-blur);
+  box-shadow: var(--gt-glass-rim) !important;
+}
+
+/* Comments: collapsed behind a glass button until asked for. */
+html.gt-watch-active:not(.gt-comments-open) ytd-watch-flexy #below #comments {
+  display: none !important;
+}
+
+html.gt-watch-active ytd-watch-flexy #below #comments {
+  margin-top: 14px !important;
+  padding: 8px 28px 24px !important;
+  border: 1px solid var(--gt-glass-border);
+  border-radius: 26px;
+  background: var(--gt-glass);
+  backdrop-filter: var(--gt-blur);
+  box-shadow: var(--gt-glass-rim);
+}
+
+.gt-comments-toggle {
+  margin: 28px 0 6px;
+}
+
+.gt-comments-toggle .gt-icon:last-child {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+/* Up Next / playlist shelves under the title. */
+#gt-upnext {
+  --gt-left: 40px;
+  --gt-right: 40px;
+
+  margin: 26px -40px 0;
+}
+
+#gt-upnext:empty {
+  display: none;
+}
+
+#gt-upnext .gt-row-nav.gt-prev {
+  left: 4px;
+}
+
+#gt-upnext .gt-row-nav.gt-next {
+  right: 4px;
+}
+
+/* Floating glass pill (Home / Search) — hides with the controls while watching. */
+.gt-watch-nav {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 2050;
+  display: flex;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 999px;
+  transition:
+    opacity 0.4s var(--gt-ease),
+    transform 0.4s var(--gt-ease);
+}
+
+html.gt-idle:not(.gt-watch-scrolled) .gt-watch-nav {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+}
+
+.gt-wnav-btn {
+  all: unset;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px 0 12px;
+  border-radius: 999px;
+  color: var(--gt-text);
+  font: 600 15px/1 var(--gt-font);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.gt-wnav-btn .gt-icon {
+  font-size: 18px;
+}
+
+.gt-wnav-icon {
+  justify-content: center;
+  width: 40px;
+  padding: 0;
+}
+
+.gt-wnav-btn:hover,
+.gt-wnav-btn:focus-visible {
+  color: #000;
+  background: #f5f5f7;
+}
+
+/* ── Player: hide YouTube's chrome (kept in the DOM) ──────────────────────── */
+html.gt-controls-on
+  #movie_player:not(.ad-showing, .ad-interrupting)
+  :is(
+    .ytp-chrome-bottom,
+    .ytp-gradient-bottom,
+    .ytp-chrome-top,
+    .ytp-gradient-top,
+    .ytp-bezel,
+    .ytp-bezel-text-wrapper,
+    .ytp-tooltip,
+    .ytp-doubletap-ui-legacy
+  ) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+html.gt-controls-on #movie_player:is(.ad-showing, .ad-interrupting) .gt-controls {
+  display: none;
+}
+
+html.gt-idle #movie_player {
+  cursor: none;
+}
+
+html.gt-controls-on #movie_player.gt-ctl-visible .ytp-caption-window-bottom {
+  margin-bottom: 170px !important;
+}
+
+html.gt-controls-on #movie_player .ytp-caption-window-bottom {
+  transition: margin-bottom 0.35s var(--gt-ease);
+}
+
+html.gt-controls-on .ytp-settings-menu {
+  right: clamp(20px, 4vw, 72px) !important;
+  bottom: 170px !important;
+}
+
+html.gt-on .ytp-popup {
+  border: 1px solid rgb(255 255 255 / 14%) !important;
+  border-radius: 20px !important;
+  background: rgb(28 28 34 / 72%) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  box-shadow: 0 30px 60px -20px rgb(0 0 0 / 80%) !important;
+}
+
+/* ── GlassTube controls ────────────────────────────────────────────────────── */
+.gt-controls {
+  --gt-pad: clamp(20px, 4vw, 72px);
+
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  color: #fff;
+  font-family: var(--gt-font);
+  pointer-events: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gt-ctl-scrim,
+.gt-ctl-bar {
+  opacity: 0;
+  transition:
+    opacity 0.4s var(--gt-ease),
+    transform 0.5s var(--gt-ease);
+}
+
+#movie_player.gt-ctl-visible .gt-ctl-scrim,
+#movie_player.gt-ctl-visible .gt-ctl-bar,
+.gt-controls.gt-paused .gt-ctl-scrim,
+.gt-controls.gt-paused .gt-ctl-bar {
+  opacity: 1;
+}
+
+.gt-ctl-scrim {
+  position: absolute;
+  inset: auto 0 0;
+  height: 60%;
+  background: linear-gradient(0deg, rgb(0 0 0 / 78%), rgb(0 0 0 / 38%) 45%, transparent);
+}
+
+.gt-ctl-bar {
+  position: absolute;
+  right: var(--gt-pad);
+  bottom: clamp(18px, 3.2vh, 40px);
+  left: var(--gt-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform: translateY(14px);
+  pointer-events: none;
+}
+
+#movie_player.gt-ctl-visible .gt-ctl-bar,
+.gt-controls.gt-paused .gt-ctl-bar {
+  transform: none;
+  pointer-events: auto;
+}
+
+.gt-ctl-head {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.gt-ctl-meta {
+  min-width: 0;
+  text-shadow: 0 1px 14px rgb(0 0 0 / 60%);
+}
+
+.gt-ctl-channel {
+  color: rgb(235 235 245 / 70%);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.gt-ctl-title {
+  margin: 4px 0 0;
+  overflow: hidden;
+  font-size: clamp(20px, 1.9vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.gt-ctl-buttons {
+  display: flex;
+  flex: none;
+  gap: 10px;
+}
+
+.gt-cgroup {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgb(70 70 80 / 42%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 12%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 16%);
+}
+
+.gt-solid .gt-cgroup {
+  background: rgb(44 44 50 / 96%);
+}
+
+.gt-cbtn {
+  all: unset;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  transition:
+    background 0.2s var(--gt-ease),
+    color 0.2s var(--gt-ease),
+    transform 0.3s var(--gt-spring);
+}
+
+.gt-cbtn[hidden] {
+  display: none;
+}
+
+.gt-cbtn:hover,
+.gt-cbtn:focus-visible {
+  color: #000;
+  background: rgb(255 255 255 / 92%);
+  transform: scale(1.08);
+}
+
+.gt-cbtn.gt-on {
+  background: rgb(255 255 255 / 24%);
+}
+
+.gt-cbtn.gt-on:hover {
+  background: rgb(255 255 255 / 92%);
+}
+
+.gt-cbtn-play {
+  font-size: 24px;
+}
+
+.gt-cbtn-label {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.gt-cbtn:has(.gt-cbtn-label:not(:empty)) .gt-icon {
+  display: none;
+}
+
+.gt-vol {
+  width: 0;
+  height: 6px;
+  margin: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #fff calc(var(--gt-vol, 1) * 100%),
+    rgb(255 255 255 / 28%) calc(var(--gt-vol, 1) * 100%)
+  );
+  opacity: 0;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    width 0.35s var(--gt-ease),
+    margin 0.35s var(--gt-ease),
+    opacity 0.25s var(--gt-ease);
+}
+
+.gt-vol::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
+  appearance: none;
+}
+
+.gt-cgroup-vol:hover .gt-vol,
+.gt-vol:focus-visible {
+  width: 92px;
+  margin: 0 14px 0 6px;
+  opacity: 1;
+}
+
+/* Scrubber */
+.gt-scrub {
+  --gt-played: 0;
+  --gt-buffered: 0;
+  --gt-hover: 0;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  cursor: pointer;
+  outline: none;
+  touch-action: none;
+}
+
+.gt-scrub-track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 24%);
+  backdrop-filter: blur(10px);
+  transition: height 0.25s var(--gt-spring);
+}
+
+.gt-scrub.gt-hovering .gt-scrub-track,
+.gt-scrub:focus-visible .gt-scrub-track {
+  height: 10px;
+}
+
+.gt-scrub-track i {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+}
+
+.gt-buffered {
+  background: rgb(255 255 255 / 24%);
+  transform: scaleX(var(--gt-buffered));
+}
+
+.gt-played {
+  background: #fff;
+  transform: scaleX(var(--gt-played));
+}
+
+.gt-hoverfill {
+  background: rgb(255 255 255 / 22%);
+  opacity: 0;
+  transform: scaleX(var(--gt-hover));
+}
+
+.gt-scrub.gt-hovering .gt-hoverfill {
+  opacity: 1;
+}
+
+.gt-knob {
+  position: absolute;
+  left: calc(var(--gt-played) * 100%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 45%);
+  transform: translateX(-50%) scale(0);
+  transition: transform 0.25s var(--gt-spring);
+}
+
+.gt-scrub.gt-hovering .gt-knob,
+.gt-scrub:focus-visible .gt-knob {
+  transform: translateX(-50%) scale(1);
+}
+
+.gt-preview {
+  position: absolute;
+  bottom: 34px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s var(--gt-ease);
+}
+
+.gt-scrub.gt-hovering .gt-preview {
+  opacity: 1;
+}
+
+.gt-preview-img {
+  border: 2px solid rgb(255 255 255 / 85%);
+  border-radius: 14px;
+  background-color: #111;
+  background-repeat: no-repeat;
+  box-shadow: 0 20px 40px -12px rgb(0 0 0 / 80%);
+}
+
+.gt-preview-img[hidden] {
+  display: none;
+}
+
+.gt-preview-time {
+  padding: 4px 10px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: rgb(0 0 0 / 62%);
+  backdrop-filter: blur(12px);
+}
+
+.gt-times {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -4px;
+  color: rgb(235 235 245 / 72%);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.gt-live-pill {
+  display: none;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  background: var(--gt-live);
+}
+
+.gt-live-pill .gt-icon {
+  font-size: 14px;
+}
+
+.gt-live .gt-live-pill {
+  display: inline-flex;
+}
+
+.gt-live .gt-scrub,
+.gt-live .gt-remaining {
+  visibility: hidden;
+}
+
+/* Centre glyph flashed on play / pause / skip, like tvOS. */
+.gt-glyph {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: -48px 0 0 -48px;
+  border-radius: 50%;
+  font-size: 42px;
+  background: rgb(40 40 48 / 45%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 20%);
+  opacity: 0;
+}
+
+.gt-glyph.gt-flash {
+  animation: gt-glyph 0.75s var(--gt-ease) both;
+}
+
+@keyframes gt-glyph {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  25% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+
+/* Speed menu */
+.gt-menu {
+  position: absolute;
+  z-index: 2;
+  min-width: 210px;
+  padding: 8px;
+  border-radius: 22px;
+  background: rgb(36 36 44 / 70%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 14%);
+  box-shadow:
+    0 30px 60px -20px rgb(0 0 0 / 85%),
+    inset 0 1px 0 rgb(255 255 255 / 16%);
+  pointer-events: auto;
+  animation: gt-rise 0.25s var(--gt-ease) both;
+}
+
+.gt-menu-title {
+  padding: 8px 12px 6px;
+  color: rgb(235 235 245 / 60%);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gt-menu-item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gt-menu-item[aria-checked='true']::after {
+  content: '✓';
+}
+
+.gt-menu-item:hover,
+.gt-menu-item:focus-visible {
+  color: #000;
+  background: #f5f5f7;
+}

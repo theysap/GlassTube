@@ -48,7 +48,7 @@
   GT.onPageData(({ endpoint, request, data, url }) => {
     if (!data) return;
     const route = GT.route(new URL(url));
-    if (endpoint === 'initial') {
+    if (endpoint === 'initial' || endpoint === 'navigate') {
       if (route === 'home') setHome(extractFeed(data), false);
       else if (route === 'watch') setWatch(extractWatch(data));
     } else if (endpoint === 'browse') {
@@ -73,5 +73,24 @@
     },
     /** Ask the bridge to re-send anything captured before we were listening. */
     replay: () => GT.bridge('replay'),
+    /** Re-reads YouTube's home grid (it grows as the hidden native feed pages in). */
+    syncHomeGrid: async () => {
+      const grid = await GT.bridge('getHomeGrid');
+      if (!grid) return false;
+      const feed = extractFeed(grid);
+      const before = state.home.items.length;
+      if (feed.items.length > before) setHome({ items: feed.items, shelves: feed.shelves }, false);
+      return state.home.items.length > before;
+    },
+    /** Re-reads the related list (it grows as YouTube loads more). */
+    syncRelated: async () => {
+      const related = await GT.bridge('getRelated');
+      if (!related) return;
+      const items = extractWatch({ onResponseReceivedEndpoints: related }).related;
+      if (items.length > state.watch.related.length) {
+        state.watch.related = items;
+        emit('watch');
+      }
+    },
   };
 })();

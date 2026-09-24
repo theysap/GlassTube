@@ -108,3 +108,33 @@ test('parseInitialData reads ytInitialData from HTML', () => {
   assert.deepEqual(data.parseInitialData(html), homeData);
   assert.equal(data.parseInitialData('<html></html>'), null);
 });
+
+const SPEC =
+  'https://i.ytimg.com/sb/ID/storyboard3_L$L/$N.jpg?sqp=abc|48#27#100#10#10#0#default#rs$A|80#45#108#10#10#2000#M$M#rs$B|160#90#108#5#5#2000#M$M#rs$C|320#180#108#3#3#2000#M$M#rs$D';
+
+test('parseStoryboard reads every level', () => {
+  const board = data.parseStoryboard(SPEC);
+  assert.equal(board.levels.length, 4);
+  assert.deepEqual(
+    board.levels.map((l) => [l.width, l.cols, l.rows, l.interval]),
+    [
+      [48, 10, 10, 0],
+      [80, 10, 10, 2000],
+      [160, 5, 5, 2000],
+      [320, 3, 3, 2000],
+    ],
+  );
+  assert.equal(data.parseStoryboard(''), null);
+});
+
+test('storyboardFrame picks the right sheet and cell', () => {
+  const board = data.parseStoryboard(SPEC);
+  // 25 s at 2 s/frame → frame 12 → sheet 1 (9 per sheet), cell 3 → col 0,row 1.
+  const f = data.storyboardFrame(board, 25, 216);
+  assert.equal(f.url, 'https://i.ytimg.com/sb/ID/storyboard3_L3/M1.jpg?sqp=abc&sigh=rs%24D');
+  assert.deepEqual([f.x, f.y, f.width, f.height, f.sheetWidth], [0, 180, 320, 180, 960]);
+  // Clamped to the last frame.
+  assert.equal(data.storyboardFrame(board, 99999, 216).url.includes('M11.jpg'), true);
+  // A smaller cap selects a smaller level.
+  assert.equal(data.storyboardFrame(board, 0, 216, 160).width, 160);
+});

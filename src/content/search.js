@@ -167,7 +167,7 @@
     });
 
     layer = h(
-      'div#gt-search.gt-layer.gt-search',
+      'div#gt-search.gt-layer.gt-surface.gt-search',
       { role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Search' },
       h(
         'div.gt-search-bar',

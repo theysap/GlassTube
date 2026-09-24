@@ -152,6 +152,10 @@
       '<path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>',
     grid: '<rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2"/><rect x="13" y="13" width="7.5" height="7.5" rx="2"/>',
     live: '<circle cx="12" cy="12" r="3.2"/><path d="M7.2 7.2a6.8 6.8 0 0 0 0 9.6m9.6 0a6.8 6.8 0 0 0 0-9.6M4.4 4.4a10.8 10.8 0 0 0 0 15.2m15.2 0a10.8 10.8 0 0 0 0-15.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
+    next: '<path d="M4.5 5.2v13.6a.9.9 0 0 0 1.4.75l9.6-6.8a.9.9 0 0 0 0-1.5L5.9 4.45a.9.9 0 0 0-1.4.75z"/><rect x="17" y="4.5" width="3" height="15" rx="1.2"/>',
+    back: '<path d="M15 4.5 7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    chevronDown:
+      '<path d="m5 9.5 7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
     returnTab:
       '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12h8m-3.5-3.5L16 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   };

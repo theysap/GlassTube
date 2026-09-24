@@ -287,6 +287,7 @@
     if (Date.now() - lastMore < 2500 || !GT.store.home.items.length) return;
     lastMore = Date.now();
     window.scrollTo(0, document.documentElement.scrollHeight);
+    [1200, 3000, 6000].forEach((ms) => setTimeout(() => layer && GT.store.syncHomeGrid(), ms));
   };
 
   // ── Lifecycle ───────────────────────────────────────────────────────────
@@ -305,7 +306,7 @@
     document.documentElement.classList.add('gt-home-active');
 
     layer = h(
-      'div#gt-home.gt-layer.gt-home',
+      'div#gt-home.gt-layer.gt-surface.gt-home',
       h('div.gt-ambient', { 'aria-hidden': 'true' }),
       GT.ui.sidebar({
         current: 'home',
@@ -382,6 +383,7 @@
 
     render();
     if (!GT.store.home.items.length) GT.store.replay();
+    GT.store.syncHomeGrid();
     if (savedScroll.at === GT.store.home.at && savedScroll.top) layer.scrollTop = savedScroll.top;
 
     loadLazy('history', '/feed/history', { ttl: 0 });

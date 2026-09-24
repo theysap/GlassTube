@@ -341,6 +341,65 @@
 
   const thumbUrl = (id, quality = 'hqdefault') => `${THUMB_HOST}${id}/${quality}.jpg`;
 
+  /**
+   * Parses a player storyboard spec ("url|w#h#count#cols#rows#intervalMs#name#sigh|…") into
+   * levels of sprite sheets used for scrubbing previews. Highest resolution last.
+   */
+  const parseStoryboard = (spec) => {
+    if (typeof spec !== 'string' || !spec.includes('|')) return null;
+    const [base, ...rawLevels] = spec.split('|');
+    const levels = rawLevels
+      .map((raw, index) => {
+        const [w, h, count, cols, rows, interval, name, sigh] = raw.split('#');
+        const level = {
+          index,
+          width: Number(w),
+          height: Number(h),
+          count: Number(count),
+          cols: Number(cols),
+          rows: Number(rows),
+          interval: Number(interval),
+          name,
+          sigh,
+        };
+        return level.width && level.count && level.cols && level.rows ? level : null;
+      })
+      .filter(Boolean);
+    return levels.length ? { base, levels } : null;
+  };
+
+  /** Sprite URL and offsets of the preview frame for time `t` (seconds). */
+  const storyboardFrame = (board, t, duration, maxWidth = 320) => {
+    if (!board) return null;
+    const usable = board.levels.filter((l) => l.width <= maxWidth);
+    const level = (usable.length ? usable : board.levels).at(-1);
+    const frame = Math.max(
+      0,
+      Math.min(
+        level.count - 1,
+        level.interval > 0
+          ? Math.floor((t * 1000) / level.interval)
+          : Math.floor((t / Math.max(1, duration)) * level.count),
+      ),
+    );
+    const perSheet = level.cols * level.rows;
+    const sheet = Math.floor(frame / perSheet);
+    const cell = frame % perSheet;
+    let url = board.base
+      .replace('$L', String(level.index))
+      .replace('$N', level.name.replace('$M', String(sheet)));
+    if (level.sigh) url += `${url.includes('?') ? '&' : '?'}sigh=${encodeURIComponent(level.sigh)}`;
+    return {
+      url,
+      x: (cell % level.cols) * level.width,
+      y: Math.floor(cell / level.cols) * level.height,
+      width: level.width,
+      height: level.height,
+      sheetWidth: level.cols * level.width,
+      sheetHeight: level.rows * level.height,
+    };
+  };
+
   return {
     text,
     bestImage,
@@ -350,5 +409,7 @@
     extractWatch,
     parseInitialData,
     thumbUrl,
+    parseStoryboard,
+    storyboardFrame,
   };
 });
