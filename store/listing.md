@@ -23,6 +23,9 @@ A full-bleed hero that rotates through your top picks, followed by rows you scro
 ★ Cinematic watch page
 The player fills the screen. Glass controls fade in when you need them: play/pause, 10-second skips, a thick scrubber with thumbnail previews, captions, speed, volume, fullscreen and Picture in Picture. Scroll down for an Up Next row, the description and comments in glass panels.
 
+★ Every page, redesigned
+Channels get a full-bleed banner, big avatar and glass tab pills. Playlists, Watch Later and Liked videos become a collection page with a numbered episode list. Subscriptions, History, You, search results, hashtags and hubs like Gaming get big titles, shelves and grids — and Shorts play on an ambient glow with glass buttons.
+
 ★ Picture in Picture, redesigned
 Pop the video into a floating window with tvOS-style controls, a scrubber and a one-click return to the tab.
 
@@ -30,7 +33,7 @@ Pop the video into a floating window with tvOS-style controls, a scrubber and a 
 Move around the home screen with the arrow keys like a remote.
 
 ★ Yours to tune
-Turn any part on or off from the toolbar popup, reduce transparency, or pause GlassTube with one switch.
+Turn any part on or off from the toolbar popup, reduce transparency, switch a page back to YouTube's Classic View, or pause GlassTube with one switch.
 
 Privacy: GlassTube collects no data, has no analytics and never contacts any server. It only restyles pages you open on youtube.com.
 
@@ -54,6 +57,10 @@ GlassTube is an independent project. It is not affiliated with, endorsed by or s
 - **Data usage:** GlassTube does not collect or transmit any user data. Tick none of the data categories.
 - **Certifications:** No sale of data · no unrelated use · no creditworthiness use.
 - **Privacy policy URL:** https://github.com/theysap/GlassTube/blob/main/PRIVACY.md
+
+## Test instructions for the reviewer
+
+No account or setup needed. Open https://www.youtube.com — the home page becomes a full-screen Top Shelf. Open any video for the cinematic player; click the Picture-in-Picture button in the glass control bar. Visit https://www.youtube.com/@BlenderStudio for a channel page. Toggle features from the toolbar popup.
 
 ## What's new in v{{version}}
 

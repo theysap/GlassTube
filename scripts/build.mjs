@@ -2,7 +2,6 @@
 // zip plus every asset the Chrome Web Store listing needs (never committed — see .gitignore).
 import {
   copyFileSync,
-  existsSync,
   mkdirSync,
   readdirSync,
   readFileSync,
@@ -42,16 +41,11 @@ if (withStore) {
   writeFileSync(join(out, zipName), zip);
   copyFileSync(join(SRC, 'icons/icon128.png'), join(out, 'store-icon-128x128.png'));
 
-  // Promo tiles + screenshots rendered by `npm run screenshots` (headless Chrome).
-  const rendered = join(ROOT, 'dist', '..', 'chrome', '.rendered');
-  if (existsSync(rendered)) {
-    for (const f of readdirSync(rendered)) copyFileSync(join(rendered, f), join(out, f));
-  }
-
   const listing = readFileSync(join(ROOT, 'store/listing.md'), 'utf8')
     .replaceAll('{{version}}', version)
     .replaceAll('{{changes}}', changelogSection(version) || '');
   writeFileSync(join(out, 'store-listing.md'), listing);
   copyFileSync(join(ROOT, 'PRIVACY.md'), join(out, 'privacy-policy.md'));
   console.log(`✔ chrome/v${version}/ — ${readdirSync(out).join(', ')}`);
+  console.log('ℹ run `npm run screenshots` to add store screenshots and promo tiles');
 }

@@ -3,6 +3,15 @@
 All notable changes to GlassTube are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
 
+## [0.7.0] - 2026-09-24
+
+### Added
+
+- **GitHub Actions** — `CI` (lint, unit tests, validation, commit-message convention for the pushed range, build + zip artifact) and `Release` (on `vX.Y.Z` tags: full checks, tag ⇄ manifest check, zip, GitHub Release with notes from the changelog).
+- **Chrome Web Store pipeline** — `npm run release:local` assembles `chrome/vX.Y.Z/` with the zip, store icon, 1280×800 screenshots, 440×280 and 1400×560 promo tiles (rendered from the real extension with freely licensed Blender/NASA content), listing copy with reviewer notes, and the privacy policy.
+- `scripts/check-history.mjs`, `scripts/release-notes.mjs`, issue and pull-request templates.
+- A full README with screenshots, settings, shortcuts, architecture, development and release guides.
+
 ## [0.6.0] - 2026-09-24
 
 ### Added
@@ -78,6 +87,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[0.7.0]: https://github.com/theysap/GlassTube/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/theysap/GlassTube/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/theysap/GlassTube/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/theysap/GlassTube/compare/v0.3.0...v0.4.0

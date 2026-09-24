@@ -1,0 +1,27 @@
+name: Bug report
+description: Something looks or behaves wrong on YouTube with GlassTube on
+labels: [bug]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: Which YouTube page? (Home, watch, a channel, Shorts…) Avoid private links.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: GlassTube and Chrome versions
+      placeholder: GlassTube 1.0.0 · Chrome 141
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional — please blur anything personal.
