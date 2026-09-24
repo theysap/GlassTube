@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GlassTube</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <header class="head">
+      <img class="logo" src="../icons/icon48.png" alt="" width="40" height="40" />
+      <div>
+        <h1>GlassTube</h1>
+        <p class="version" id="version"></p>
+      </div>
+    </header>
+
+    <label class="row master glass">
+      <span class="row-text">
+        <strong>GlassTube</strong>
+        <small id="master-hint">The tvOS look is on for YouTube</small>
+      </span>
+      <input type="checkbox" class="switch" data-key="enabled" />
+    </label>
+
+    <main id="groups"></main>
+
+    <footer class="foot">
+      <a href="https://github.com/theysap/GlassTube" target="_blank" rel="noopener">GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/theysap/GlassTube/issues" target="_blank" rel="noopener"
+        >Report an issue</a
+      >
+    </footer>
+    <script src="popup.js"></script>
+  </body>
+</html>

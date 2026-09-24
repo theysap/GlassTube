@@ -1,0 +1,9 @@
+# Guard: the chrome/ release folder must never be committed.
+if git diff --cached --name-only | grep -q '^chrome/'; then
+  echo "✖ chrome/ contains local Chrome Web Store bundles and must never be committed."
+  exit 1
+fi
+
+npx lint-staged
+npm test --silent
+node scripts/validate.mjs

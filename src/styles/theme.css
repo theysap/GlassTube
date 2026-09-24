@@ -1,0 +1,380 @@
+/*
+ * GlassTube — global theme.
+ * Design tokens, a Liquid Glass restyle of YouTube's native pages and shared components.
+ * Everything is scoped under html.gt-on so disabling the extension restores YouTube instantly.
+ */
+
+html.gt-on {
+  --gt-font:
+    -apple-system, blinkmacsystemfont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Inter',
+    system-ui, 'Segoe UI', roboto, sans-serif;
+  --gt-bg: #050507;
+  --gt-bg-2: #101015;
+  --gt-text: rgb(255 255 255 / 96%);
+  --gt-text-2: rgb(235 235 245 / 62%);
+  --gt-text-3: rgb(235 235 245 / 34%);
+  --gt-accent: #0a84ff;
+  --gt-live: #ff375f;
+  --gt-glass: rgb(58 58 66 / 42%);
+  --gt-glass-strong: rgb(44 44 52 / 72%);
+  --gt-glass-hover: rgb(255 255 255 / 18%);
+  --gt-glass-border: rgb(255 255 255 / 14%);
+  --gt-glass-rim: inset 0 1px 0 rgb(255 255 255 / 22%), inset 0 -1px 0 rgb(255 255 255 / 5%);
+  --gt-blur: blur(40px) saturate(185%);
+  --gt-shadow: 0 24px 60px -18px rgb(0 0 0 / 70%);
+  --gt-radius: 14px;
+  --gt-radius-lg: 24px;
+  --gt-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --gt-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --gt-gutter: clamp(20px, 4.2vw, 80px);
+  --gt-focus-scale: 1.08;
+
+  /* Pin YouTube's own design tokens to a deep, glassy dark palette. */
+  --yt-spec-base-background: var(--gt-bg) !important;
+  --yt-spec-raised-background: var(--gt-bg-2) !important;
+  --yt-spec-menu-background: rgb(30 30 36 / 92%) !important;
+  --yt-spec-general-background-a: var(--gt-bg) !important;
+  --yt-spec-general-background-b: var(--gt-bg-2) !important;
+  --yt-spec-general-background-c: var(--gt-bg-2) !important;
+  --yt-spec-text-primary: var(--gt-text) !important;
+  --yt-spec-text-secondary: var(--gt-text-2) !important;
+  --yt-spec-text-disabled: var(--gt-text-3) !important;
+  --yt-spec-10-percent-layer: rgb(255 255 255 / 10%) !important;
+  --yt-spec-badge-chip-background: rgb(255 255 255 / 10%) !important;
+  --yt-spec-button-chip-background-hover: rgb(255 255 255 / 20%) !important;
+  --yt-spec-additive-background: rgb(255 255 255 / 10%) !important;
+  --yt-spec-outline: rgb(255 255 255 / 14%) !important;
+  --yt-spec-icon-active-other: var(--gt-text) !important;
+  --yt-spec-icon-inactive: var(--gt-text-2) !important;
+  --yt-spec-call-to-action: var(--gt-accent) !important;
+  --yt-spec-static-brand-red: var(--gt-live) !important;
+  --yt-spec-shadow: rgb(0 0 0 / 50%) !important;
+  --yt-spec-inverted-background: #f2f2f7 !important;
+
+  color-scheme: dark;
+  background: var(--gt-bg) !important;
+}
+
+html.gt-on.gt-solid {
+  --gt-glass: rgb(44 44 50 / 100%);
+  --gt-glass-strong: rgb(36 36 42 / 100%);
+  --gt-blur: none;
+}
+
+html.gt-on body {
+  background: var(--gt-bg) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+html.gt-on body,
+html.gt-on ytd-app,
+html.gt-on body :where(*:not(svg, svg *, code, pre, kbd, samp)) {
+  font-family: var(--gt-font) !important;
+}
+
+html.gt-on ytd-app {
+  background:
+    radial-gradient(120vw 80vh at 50% -20%, rgb(40 44 70 / 55%), transparent 60%), var(--gt-bg) !important;
+}
+
+/* ── Native chrome: glass masthead, guide, chips, menus ────────────────────── */
+html.gt-on #masthead-container.ytd-app,
+html.gt-on ytd-masthead {
+  background: transparent !important;
+}
+
+html.gt-on #masthead-container.ytd-app {
+  background: rgb(10 10 14 / 55%) !important;
+  backdrop-filter: var(--gt-blur);
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+}
+
+html.gt-on ytd-masthead #background,
+html.gt-on ytd-masthead #frosted-glass,
+html.gt-on #frosted-glass.ytd-app {
+  display: none !important;
+}
+
+html.gt-on ytd-searchbox #container.ytd-searchbox,
+html.gt-on yt-searchbox .ytSearchboxComponentInputBox {
+  background: var(--gt-glass) !important;
+  border: 1px solid var(--gt-glass-border) !important;
+  border-radius: 999px 0 0 999px !important;
+  box-shadow: var(--gt-glass-rim) !important;
+}
+
+html.gt-on ytd-searchbox #search-icon-legacy,
+html.gt-on yt-searchbox .ytSearchboxComponentSearchButton {
+  background: var(--gt-glass) !important;
+  border: 1px solid var(--gt-glass-border) !important;
+  border-radius: 0 999px 999px 0 !important;
+}
+
+html.gt-on tp-yt-app-drawer #contentContainer,
+html.gt-on ytd-mini-guide-renderer,
+html.gt-on #guide-content {
+  background: rgb(12 12 16 / 60%) !important;
+  backdrop-filter: var(--gt-blur);
+}
+
+html.gt-on ytd-guide-entry-renderer tp-yt-paper-item,
+html.gt-on ytd-mini-guide-entry-renderer {
+  border-radius: 12px !important;
+}
+
+html.gt-on yt-chip-cloud-chip-renderer,
+html.gt-on chip-shape > button {
+  border-radius: 999px !important;
+  border: 1px solid var(--gt-glass-border) !important;
+  background: var(--gt-glass) !important;
+  backdrop-filter: var(--gt-blur);
+  transition:
+    background 0.2s var(--gt-ease),
+    transform 0.2s var(--gt-ease);
+}
+
+html.gt-on yt-chip-cloud-chip-renderer[selected],
+html.gt-on chip-shape > button[aria-selected='true'] {
+  background: #f2f2f7 !important;
+  color: #000 !important;
+}
+
+html.gt-on #chips-wrapper.ytd-feed-filter-chip-bar-renderer,
+html.gt-on ytd-feed-filter-chip-bar-renderer {
+  background: transparent !important;
+}
+
+html.gt-on tp-yt-iron-dropdown ytd-menu-popup-renderer,
+html.gt-on ytd-multi-page-menu-renderer,
+html.gt-on yt-sheet-view-model,
+html.gt-on tp-yt-paper-dialog {
+  background: rgb(34 34 40 / 78%) !important;
+  backdrop-filter: var(--gt-blur);
+  border: 1px solid var(--gt-glass-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--gt-shadow), var(--gt-glass-rim) !important;
+}
+
+/* ── Thumbnails and cards on native pages ─────────────────────────────────── */
+html.gt-on ytd-thumbnail a#thumbnail,
+html.gt-on ytd-thumbnail,
+html.gt-on ytd-playlist-thumbnail,
+html.gt-on yt-thumbnail-view-model,
+html.gt-on .yt-lockup-view-model__content-image,
+html.gt-on ytd-rich-grid-media ytd-thumbnail,
+html.gt-on ytd-thumbnail yt-image img {
+  border-radius: var(--gt-radius) !important;
+}
+
+html.gt-on ytd-rich-item-renderer,
+html.gt-on ytd-video-renderer,
+html.gt-on ytd-grid-video-renderer,
+html.gt-on yt-lockup-view-model {
+  transition: transform 0.35s var(--gt-ease);
+}
+
+html.gt-on ytd-rich-item-renderer:hover,
+html.gt-on ytd-grid-video-renderer:hover {
+  transform: translateY(-3px);
+}
+
+html.gt-on #video-title,
+html.gt-on .yt-lockup-metadata-view-model__title {
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Rounded, glassy pill buttons (like / subscribe / share). */
+html.gt-on yt-button-shape button,
+html.gt-on ytd-button-renderer button,
+html.gt-on tp-yt-paper-button {
+  border-radius: 999px !important;
+}
+
+html.gt-on yt-button-shape .yt-spec-button-shape-next--tonal {
+  background: var(--gt-glass) !important;
+  border: 1px solid var(--gt-glass-border);
+  backdrop-filter: var(--gt-blur);
+}
+
+html.gt-on ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+
+html.gt-on ::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 18%) padding-box;
+}
+
+/* ── Shared GlassTube components ──────────────────────────────────────────── */
+.gt-icon {
+  display: block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+.gt-glass {
+  background: var(--gt-glass);
+  backdrop-filter: var(--gt-blur);
+  border: 1px solid var(--gt-glass-border);
+  box-shadow: var(--gt-glass-rim);
+}
+
+.gt-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font: 600 17px/1 var(--gt-font);
+  letter-spacing: -0.01em;
+  color: var(--gt-text);
+  background: var(--gt-glass);
+  backdrop-filter: var(--gt-blur);
+  border: 1px solid var(--gt-glass-border);
+  box-shadow: var(--gt-glass-rim);
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--gt-spring),
+    background 0.2s var(--gt-ease),
+    color 0.2s var(--gt-ease),
+    box-shadow 0.3s var(--gt-ease);
+}
+
+.gt-btn .gt-icon {
+  font-size: 20px;
+}
+
+.gt-btn:hover,
+.gt-btn:focus-visible {
+  transform: scale(1.06);
+  background: #f5f5f7;
+  color: #000;
+  box-shadow: 0 16px 40px -12px rgb(0 0 0 / 60%);
+}
+
+.gt-btn.gt-btn-primary {
+  background: #f5f5f7;
+  color: #000;
+  border-color: transparent;
+}
+
+.gt-btn.gt-btn-primary:hover,
+.gt-btn.gt-btn-primary:focus-visible {
+  background: #fff;
+}
+
+.gt-btn.gt-btn-round {
+  width: 52px;
+  padding: 0;
+}
+
+.gt-btn:active {
+  transform: scale(0.97);
+}
+
+/* Floating tvOS-style sidebar (shared by the home layer). */
+.gt-sidebar {
+  position: fixed;
+  z-index: 5;
+  top: 50%;
+  left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 60px;
+  padding: 8px;
+  overflow: hidden;
+  border-radius: 30px;
+  transform: translateY(-50%);
+  background: rgb(40 40 48 / 38%);
+  backdrop-filter: var(--gt-blur);
+  border: 1px solid var(--gt-glass-border);
+  box-shadow: var(--gt-shadow), var(--gt-glass-rim);
+  transition:
+    width 0.45s var(--gt-spring),
+    background 0.3s var(--gt-ease);
+}
+
+.gt-sidebar:hover,
+.gt-sidebar:focus-within {
+  width: 244px;
+  background: rgb(44 44 52 / 62%);
+}
+
+.gt-sidebar-sep {
+  height: 1px;
+  margin: 6px 10px;
+  background: rgb(255 255 255 / 10%);
+}
+
+.gt-side-item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 44px;
+  padding: 0 11px;
+  border-radius: 22px;
+  color: var(--gt-text-2);
+  font: 600 16px/1 var(--gt-font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.2s var(--gt-ease),
+    color 0.2s var(--gt-ease),
+    transform 0.25s var(--gt-spring);
+}
+
+.gt-side-item .gt-icon {
+  font-size: 22px;
+}
+
+.gt-side-item span {
+  opacity: 0;
+  transition: opacity 0.25s var(--gt-ease);
+}
+
+.gt-sidebar:hover .gt-side-item span,
+.gt-sidebar:focus-within .gt-side-item span {
+  opacity: 1;
+}
+
+.gt-side-item:hover,
+.gt-side-item:focus-visible {
+  color: #000;
+  background: #f5f5f7;
+}
+
+.gt-side-item[aria-current='page'] {
+  color: var(--gt-text);
+  background: rgb(255 255 255 / 14%);
+}
+
+.gt-side-item[aria-current='page']:hover,
+.gt-side-item[aria-current='page']:focus-visible {
+  color: #000;
+  background: #f5f5f7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.gt-on {
+    --gt-focus-scale: 1.03;
+  }
+
+  html.gt-on *,
+  html.gt-on *::before,
+  html.gt-on *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
