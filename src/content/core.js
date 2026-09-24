@@ -17,6 +17,8 @@
     heroRotate: true,
     tilt: true,
     exploreRows: true,
+    pages: true,
+    shorts: true,
     reduceTransparency: false,
   });
 
@@ -156,6 +158,8 @@
     back: '<path d="M15 4.5 7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
     chevronDown:
       '<path d="m5 9.5 7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    playlist:
+      '<rect x="3" y="5" width="12" height="2.2" rx="1.1"/><rect x="3" y="10" width="12" height="2.2" rx="1.1"/><rect x="3" y="15" width="8" height="2.2" rx="1.1"/><path d="M15 13.5v6.8a.7.7 0 0 0 1.05.6l5-3.4a.7.7 0 0 0 0-1.2l-5-3.4a.7.7 0 0 0-1.05.6z"/>',
     returnTab:
       '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12h8m-3.5-3.5L16 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   };

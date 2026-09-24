@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "GlassTube",
   "short_name": "GlassTube",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Reimagine YouTube as a cinematic, Apple TV-inspired experience with a Liquid Glass design.",
   "minimum_chrome_version": "116",
   "homepage_url": "https://github.com/theysap/GlassTube",
@@ -36,7 +36,7 @@
     {
       "matches": ["https://www.youtube.com/*"],
       "exclude_matches": ["https://www.youtube.com/embed/*", "https://www.youtube.com/live_chat*"],
-      "css": ["styles/theme.css", "styles/home.css", "styles/watch.css"],
+      "css": ["styles/theme.css", "styles/home.css", "styles/browse.css", "styles/watch.css"],
       "js": [
         "content/core.js",
         "content/registry.js",
@@ -48,6 +48,8 @@
         "content/controls.js",
         "content/watch.js",
         "content/pip.js",
+        "content/browse.js",
+        "content/shorts.js",
         "content/main.js"
       ],
       "run_at": "document_start"

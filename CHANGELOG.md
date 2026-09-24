@@ -3,6 +3,25 @@
 All notable changes to GlassTube are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
 
+## [0.6.0] - 2026-09-24
+
+### Added
+
+- **tvOS browse pages** for everything else YouTube offers, built from each page's own data:
+  - **Channels** — full-bleed banner, large avatar, subscriber line, description, a Subscribe button that drives YouTube's own, glass tab pills (Home, Videos, Shorts, Live, Playlists…), the featured trailer and every channel shelf.
+  - **Playlists** (incl. Watch Later and Liked videos) — a stacked collection header with Play All and a numbered, TV-app-style episode list.
+  - **Subscriptions** (with a “Your Channels” strip), **History** (grouped by day), **You**, **Playlists**, **search results**, **hashtags** and **hub pages** (Gaming, Music, News…) — big titles, titled grids and shelves.
+  - Endless paging on every grid, fed by YouTube's own feed underneath.
+  - Pages without cards (Posts, settings, signed-out feeds) stay native and themed; **Classic View** / **Edit** / **Manage History** hand any page back to YouTube's layout.
+- **Cinematic Shorts** — YouTube's Shorts player (gestures intact) on an ambient glow from the current Short, glass action buttons, rounded player, no masthead or guide, plus the GlassTube sidebar.
+- Playlist, mix, album and podcast cards (stacked artwork, item-count badge); a “Mixes & Playlists” shelf on Home and a Playlists row in search.
+- Parser support for hub video cards, grid channels, playlist renderers and titled hub lists; `extractPage` with tests.
+- New settings: **tvOS Browse Pages** and **Cinematic Shorts**.
+
+### Fixed
+
+- Filled buttons (Subscribe) stay readable everywhere, not only inside `yt-button-shape`.
+
 ## [0.5.0] - 2026-09-24
 
 ### Added
@@ -59,6 +78,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[0.6.0]: https://github.com/theysap/GlassTube/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/theysap/GlassTube/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/theysap/GlassTube/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/theysap/GlassTube/compare/v0.2.0...v0.3.0

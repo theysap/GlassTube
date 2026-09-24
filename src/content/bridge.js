@@ -175,7 +175,8 @@
     const u = new URL(href, location.origin);
     if (u.origin !== location.origin) return location.assign(u.href);
     const app = document.querySelector('ytd-app');
-    const endpoint = endpointFor(u, meta);
+    // Tabs hand over YouTube's own endpoint (it carries tab params we cannot rebuild).
+    const endpoint = meta?.endpoint || endpointFor(u, meta);
     if (!app || !endpoint) return location.assign(u.href);
     const before = location.href;
     app.dispatchEvent(
@@ -223,6 +224,9 @@
       };
     },
     getHomeGrid: () => rendererData('ytd-browse[page-subtype="home"] ytd-rich-grid-renderer'),
+    getPageData: () =>
+      rendererData('ytd-page-manager > ytd-browse:not([hidden])') ||
+      rendererData('ytd-page-manager > ytd-search:not([hidden])'),
     getRelated: () => rendererData('ytd-watch-flexy ytd-watch-next-secondary-results-renderer'),
     replay: () => {
       Object.values(last).forEach((msg) => send(msg));

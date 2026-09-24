@@ -189,3 +189,95 @@ export const watchData = {
     },
   },
 };
+
+export const channelData = {
+  header: {
+    pageHeaderRenderer: {
+      content: {
+        pageHeaderViewModel: {
+          title: { dynamicTextViewModel: { text: { content: 'Lockup Channel' } } },
+          metadata: {
+            contentMetadataViewModel: {
+              metadataRows: [
+                { metadataParts: [{ text: { content: '@lockupchannel' } }] },
+                { metadataParts: [{ text: { content: '1M subscribers' } }] },
+              ],
+            },
+          },
+          banner: {
+            imageBannerViewModel: {
+              image: {
+                sources: [
+                  { url: 'https://yt3.googleusercontent.com/banner=w1060', width: 1060 },
+                  { url: 'https://yt3.googleusercontent.com/banner=w1138', width: 1138 },
+                ],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  contents: {
+    twoColumnBrowseResultsRenderer: {
+      tabs: [
+        {
+          tabRenderer: {
+            title: 'Home',
+            selected: true,
+            endpoint: { commandMetadata: { webCommandMetadata: { url: '/@lockupchannel' } } },
+            content: {
+              sectionListRenderer: {
+                contents: [
+                  {
+                    itemSectionRenderer: {
+                      contents: [
+                        {
+                          channelVideoPlayerRenderer: {
+                            videoId: 'featured001',
+                            title: { runs: [{ text: 'Featured trailer' }] },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    itemSectionRenderer: {
+                      contents: [
+                        {
+                          shelfRenderer: {
+                            title: { runs: [{ text: 'Popular videos' }] },
+                            content: {
+                              horizontalListRenderer: {
+                                items: [lockup('popular0001'), lockup('popular0002')],
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    itemSectionRenderer: {
+                      header: { itemSectionHeaderRenderer: { title: { simpleText: 'Today' } } },
+                      contents: [lockup('today000001')],
+                    },
+                  },
+                  { itemSectionRenderer: { contents: [lockup('loose000001')] } },
+                ],
+              },
+            },
+          },
+        },
+        {
+          tabRenderer: {
+            title: 'Videos',
+            endpoint: {
+              commandMetadata: { webCommandMetadata: { url: '/@lockupchannel/videos' } },
+            },
+          },
+        },
+      ],
+    },
+  },
+};

@@ -192,8 +192,8 @@ html.gt-on tp-yt-paper-button {
   border-radius: 999px !important;
 }
 
-html.gt-on yt-button-shape .yt-spec-button-shape-next--filled.yt-spec-button-shape-next--mono,
-html.gt-on yt-button-shape .ytSpecButtonShapeNextFilled.ytSpecButtonShapeNextMono {
+html.gt-on .yt-spec-button-shape-next--filled.yt-spec-button-shape-next--mono,
+html.gt-on .ytSpecButtonShapeNextFilled.ytSpecButtonShapeNextMono {
   color: #0f0f0f !important;
   background: #f5f5f7 !important;
 }

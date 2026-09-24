@@ -110,7 +110,7 @@
   // ── Renderer adapters ────────────────────────────────────────────────────
   const fromVideoRenderer = (r) => {
     if (!r || !r.videoId) return null;
-    const byline = r.ownerText || r.shortBylineText || r.longBylineText;
+    const byline = r.ownerText || r.shortBylineText || r.longBylineText || r.bylineText;
     const overlays = r.thumbnailOverlays || [];
     const timeStatus = overlays.find(
       (o) => o.thumbnailOverlayTimeStatusRenderer,
@@ -135,8 +135,12 @@
       avatar: bestImage(avatarSrc),
       thumb: bestImage(r.thumbnail),
       duration: parseDuration(duration.trim()) != null ? duration.trim() : '',
-      views: text(r.shortViewCountText) || text(r.viewCountText),
-      age: text(r.publishedTimeText),
+      views:
+        text(r.shortViewCountText) ||
+        text(r.viewCountText) ||
+        text(r.metadataText).split(' · ')[0] ||
+        '',
+      age: text(r.publishedTimeText) || text(r.metadataText).split(' · ')[1] || '',
       progress: resume?.percentDurationWatched ?? null,
       url:
         r.navigationEndpoint?.commandMetadata?.webCommandMetadata?.url || `/watch?v=${r.videoId}`,
@@ -146,7 +150,8 @@
 
   const fromLockup = (l) => {
     if (!l || !l.contentId) return null;
-    if (l.contentType && l.contentType !== 'LOCKUP_CONTENT_TYPE_VIDEO') return null;
+    if (l.contentType && l.contentType !== 'LOCKUP_CONTENT_TYPE_VIDEO')
+      return fromCollectionLockup(l);
     const meta = l.metadata?.lockupMetadataViewModel || {};
     const rows = meta.metadata?.contentMetadataViewModel?.metadataRows || [];
     const parts = rows.map((row) =>
@@ -177,6 +182,56 @@
       progress: progress ?? null,
       url: url || `/watch?v=${l.contentId}`,
       selected: false,
+    };
+  };
+
+  const COLLECTION_TYPES = /PLAYLIST|ALBUM|PODCAST|MIX/;
+
+  /** Playlists, mixes, albums and podcasts rendered as lockups. */
+  const fromCollectionLockup = (l) => {
+    if (!COLLECTION_TYPES.test(l.contentType || '')) return null;
+    const meta = l.metadata?.lockupMetadataViewModel || {};
+    const rows = meta.metadata?.contentMetadataViewModel?.metadataRows || [];
+    const parts = rows.flatMap((row) =>
+      (row.metadataParts || []).map((p) => text(p.text)).filter(Boolean),
+    );
+    const badges = findAll(l.contentImage, (v, k) => k === 'thumbnailBadgeViewModel').map((b) =>
+      text(b.text),
+    );
+    const urls = findAll(l, (v, k) => k === 'url' && typeof v === 'string' && v.startsWith('/'));
+    const image = find(l.contentImage, (v, k) => k === 'image' && Array.isArray(v?.sources));
+    return {
+      id: l.contentId,
+      kind: 'playlist',
+      title: text(meta.title),
+      channel: parts.find((p) => !/view|video|episode|updated|playlist/i.test(p)) || '',
+      ...channelFrom(meta.metadata),
+      thumb: bestImage(image),
+      duration: badges.find(Boolean) || '',
+      views: parts.find((p) => /video|episode|track/i.test(p)) || '',
+      age: parts.find((p) => /updated|ago/i.test(p)) || '',
+      url:
+        urls.find((u) => u.startsWith('/playlist')) ||
+        urls.find((u) => u.startsWith('/watch')) ||
+        `/playlist?list=${l.contentId}`,
+    };
+  };
+
+  const fromPlaylistRenderer = (r) => {
+    if (!r || !r.playlistId) return null;
+    const count = text(r.videoCountText) || (r.videoCount ? `${r.videoCount} videos` : '');
+    return {
+      id: r.playlistId,
+      kind: 'playlist',
+      title: text(r.title),
+      channel: text(r.shortBylineText || r.longBylineText),
+      ...channelFrom(r.shortBylineText || r.longBylineText),
+      thumb: bestImage(r.thumbnail || r.thumbnails?.[0] || r.thumbnailRenderer),
+      duration: count,
+      views: count,
+      url:
+        r.navigationEndpoint?.commandMetadata?.webCommandMetadata?.url ||
+        `/playlist?list=${r.playlistId}`,
     };
   };
 
@@ -217,7 +272,7 @@
       channelUrl:
         c.navigationEndpoint?.browseEndpoint?.canonicalBaseUrl || `/channel/${c.channelId}`,
       avatar: bestImage(c.thumbnail),
-      views: text(c.videoCountText) || text(c.subscriberCountText),
+      views: text(c.subscriberCountText) || text(c.videoCountText),
       url: c.navigationEndpoint?.browseEndpoint?.canonicalBaseUrl || `/channel/${c.channelId}`,
     };
   };
@@ -232,6 +287,10 @@
     reelItemRenderer: fromReel,
     shortsLockupViewModel: fromShortsLockup,
     channelRenderer: fromChannel,
+    gridChannelRenderer: fromChannel,
+    videoCardRenderer: fromVideoRenderer,
+    playlistRenderer: fromPlaylistRenderer,
+    gridPlaylistRenderer: fromPlaylistRenderer,
   };
   const SHELVES = new Set(['richShelfRenderer', 'shelfRenderer', 'reelShelfRenderer']);
 
@@ -312,6 +371,184 @@
         : null,
       isContinuation: !results && !!continuation,
     };
+  };
+
+  // ── Whole pages (channels, playlists, feeds, search, hubs) ─────────────
+  const metaRowsText = (vm) =>
+    (vm?.contentMetadataViewModel?.metadataRows || [])
+      .flatMap((row) => (row.metadataParts || []).map((p) => text(p.text)).filter(Boolean))
+      .join(' · ');
+
+  const extractHeader = (data) => {
+    const h = data?.header || {};
+    const vm = find(h, (v, k) => k === 'pageHeaderViewModel');
+    const c4 = h.c4TabbedHeaderRenderer;
+    const pl = h.playlistHeaderRenderer;
+    const meta =
+      data?.metadata?.channelMetadataRenderer || data?.metadata?.playlistMetadataRenderer;
+    const header = {
+      title: '',
+      subtitle: '',
+      description: '',
+      avatar: '',
+      banner: '',
+      hero: '',
+    };
+    if (vm) {
+      header.title = text(vm.title?.dynamicTextViewModel?.text) || text(vm.title);
+      header.subtitle = metaRowsText(vm.metadata);
+      header.description = text(vm.description?.descriptionPreviewViewModel?.description);
+      header.avatar = bestImage(find(vm.image, (v, k) => k === 'sources' && Array.isArray(v)));
+      header.banner = bestImage(vm.banner?.imageBannerViewModel?.image);
+      header.hero = bestImage(vm.heroImage?.contentPreviewImageViewModel?.image);
+    } else if (c4) {
+      header.title = text(c4.title);
+      header.subtitle = [
+        text(c4.channelHandleText),
+        text(c4.subscriberCountText),
+        text(c4.videosCountText),
+      ]
+        .filter(Boolean)
+        .join(' · ');
+      header.avatar = bestImage(c4.avatar);
+      header.banner = bestImage(c4.banner);
+    } else if (pl) {
+      header.title = text(pl.title);
+      header.subtitle = [text(pl.ownerText), text(pl.numVideosText), text(pl.viewCountText)]
+        .filter(Boolean)
+        .join(' · ');
+      header.description = text(pl.descriptionText);
+    } else {
+      const titled = find(h, (v, k) => k === 'title' && text(v));
+      header.title = text(titled);
+    }
+    header.channelId = data?.metadata?.channelMetadataRenderer?.externalId || null;
+    if (!header.title && meta) header.title = meta.title || '';
+    if (!header.description && meta?.description) header.description = meta.description;
+    if (!header.avatar && meta?.avatar) header.avatar = bestImage(meta.avatar);
+    return header;
+  };
+
+  const extractTabs = (data) =>
+    (data?.contents?.twoColumnBrowseResultsRenderer?.tabs || [])
+      .map((t) => t.tabRenderer)
+      .filter((t) => t && t.title)
+      .map((t) => ({
+        title: t.title,
+        selected: !!t.selected,
+        url: t.endpoint?.commandMetadata?.webCommandMetadata?.url || null,
+        endpoint: t.endpoint || null,
+      }));
+
+  const sectionTitle = (header) => {
+    if (!header) return '';
+    const titled = find(header, (v, k) => k === 'title' && text(v));
+    return text(titled);
+  };
+  const hasShelf = (node) => !!find(node, (v, k) => SHELVES.has(k));
+
+  /**
+   * Splits a page's contents into ordered sections. Titled shelves become rows; titled item
+   * sections (e.g. history days) and loose items become grids.
+   */
+  const extractSections = (root) => {
+    const sections = [];
+    let loose = null;
+    const flush = () => {
+      if (loose?.items.length) sections.push(loose);
+      loose = null;
+    };
+    const addLoose = (item) => {
+      if (!loose) loose = { title: '', layout: 'grid', items: [] };
+      if (!loose.items.some((i) => i.id === item.id && i.kind === item.kind))
+        loose.items.push(item);
+    };
+    const visit = (node, depth = 0) => {
+      if (!node || typeof node !== 'object' || depth > 60) return;
+      if (Array.isArray(node)) return node.forEach((n) => visit(n, depth + 1));
+      for (const [key, value] of Object.entries(node)) {
+        if (SKIP_KEYS.has(key) || key === 'header' || key === 'engagementPanels') continue;
+        if (SHELVES.has(key)) {
+          flush();
+          const items = extractItems(value.contents || value.content || value.items || value);
+          if (items.length) {
+            const shorts = items.every((i) => i.kind === 'short');
+            sections.push({
+              title: text(value.title) || (shorts ? 'Shorts' : ''),
+              layout: 'row',
+              items,
+            });
+          }
+        } else if (key === 'itemSectionRenderer') {
+          const title = sectionTitle(value.header);
+          if (title && !hasShelf(value.contents)) {
+            flush();
+            const items = extractItems(value.contents || []);
+            if (items.length) sections.push({ title, layout: 'grid', items });
+          } else {
+            visit(value.contents, depth + 1);
+          }
+        } else if (
+          /(List|Grid|Carousel)Renderer$/.test(key) &&
+          value?.header &&
+          sectionTitle(value.header) &&
+          !hasShelf(value.items || value.cards || value.contents)
+        ) {
+          // Titled lists (hub pages, channel grids) read as shelves.
+          flush();
+          const items = extractItems(value.items || value.cards || value.contents || []);
+          if (items.length)
+            sections.push({ title: sectionTitle(value.header), layout: 'row', items });
+        } else if (key === 'richListHeaderRenderer') {
+          // Hub pages title the items that follow with a separate header renderer.
+          flush();
+          loose = { title: text(value.title), layout: 'grid', items: [] };
+        } else if (key === 'channelVideoPlayerRenderer') {
+          flush();
+          const item = fromVideoRenderer(value);
+          if (item?.title) sections.push({ title: '', layout: 'featured', items: [item] });
+        } else if (ADAPTERS[key]) {
+          const item = ADAPTERS[key](value);
+          if (item && item.title) addLoose(item);
+        } else if (value && typeof value === 'object') {
+          visit(value, depth + 1);
+        }
+      }
+    };
+    visit(root);
+    flush();
+    return sections;
+  };
+
+  const pageKind = (url) => {
+    const u = new URL(url, 'https://www.youtube.com');
+    const p = u.pathname;
+    if (/^\/(@|channel\/|c\/|user\/)/.test(p)) return 'channel';
+    if (p === '/playlist') return 'playlist';
+    if (p === '/results') return 'search';
+    if (p === '/feed/history') return 'history';
+    if (p === '/feed/subscriptions') return 'subscriptions';
+    if (p === '/feed/you' || p === '/feed/library') return 'library';
+    if (p === '/feed/playlists') return 'playlists';
+    if (p === '/feed/channels') return 'channels';
+    if (p.startsWith('/hashtag/')) return 'hashtag';
+    return 'hub';
+  };
+
+  /** Header, tabs and sections for any browse / search page. */
+  const extractPage = (data, url) => {
+    const contents =
+      data?.contents?.twoColumnSearchResultsRenderer?.primaryContents ||
+      data?.contents?.twoColumnBrowseResultsRenderer?.tabs?.find((t) => t.tabRenderer?.selected)
+        ?.tabRenderer?.content ||
+      data?.contents ||
+      data?.onResponseReceivedActions;
+    const kind = pageKind(url);
+    const header = extractHeader(data);
+    if (kind === 'search') {
+      header.title = new URL(url, 'https://www.youtube.com').searchParams.get('search_query') || '';
+    }
+    return { kind, header, tabs: extractTabs(data), sections: extractSections(contents) };
   };
 
   /** Pulls `ytInitialData` out of a youtube.com HTML document. */
@@ -407,6 +644,8 @@
     extractItems,
     extractFeed,
     extractWatch,
+    extractPage,
+    pageKind,
     parseInitialData,
     thumbUrl,
     parseStoryboard,

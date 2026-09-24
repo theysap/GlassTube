@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-import { homeData, lockup, videoRenderer, watchData } from './fixtures/youtube.mjs';
+import { channelData, homeData, lockup, videoRenderer, watchData } from './fixtures/youtube.mjs';
 
 const require = createRequire(import.meta.url);
 const data = require('../src/content/data.js');
@@ -66,10 +66,18 @@ test('lockupViewModel is normalised, including channel, live and progress', () =
   assert.equal(live.duration, '');
 });
 
-test('non-video lockups (playlists, mixes) are skipped', () => {
+test('playlist lockups become playlist items; unknown lockup types are skipped', () => {
   const playlist = lockup('PLxyz');
   playlist.lockupViewModel.contentType = 'LOCKUP_CONTENT_TYPE_PLAYLIST';
-  assert.equal(data.extractItems(playlist).length, 0);
+  playlist.lockupViewModel.rendererContext.commandContext.onTap.innertubeCommand.commandMetadata.webCommandMetadata.url =
+    '/playlist?list=PLxyz';
+  const [item] = data.extractItems(playlist);
+  assert.equal(item.kind, 'playlist');
+  assert.equal(item.url, '/playlist?list=PLxyz');
+
+  const other = lockup('XYZ');
+  other.lockupViewModel.contentType = 'LOCKUP_CONTENT_TYPE_SOMETHING_NEW';
+  assert.equal(data.extractItems(other).length, 0);
 });
 
 test('extractFeed separates shelves, skips ads and de-duplicates', () => {
@@ -137,4 +145,45 @@ test('storyboardFrame picks the right sheet and cell', () => {
   assert.equal(data.storyboardFrame(board, 99999, 216).url.includes('M11.jpg'), true);
   // A smaller cap selects a smaller level.
   assert.equal(data.storyboardFrame(board, 0, 216, 160).width, 160);
+});
+
+test('pageKind classifies YouTube URLs', () => {
+  assert.equal(data.pageKind('/@blender'), 'channel');
+  assert.equal(data.pageKind('/channel/UC1/videos'), 'channel');
+  assert.equal(data.pageKind('/playlist?list=WL'), 'playlist');
+  assert.equal(data.pageKind('/feed/history'), 'history');
+  assert.equal(data.pageKind('/feed/subscriptions'), 'subscriptions');
+  assert.equal(data.pageKind('/feed/you'), 'library');
+  assert.equal(data.pageKind('/results?search_query=x'), 'search');
+  assert.equal(data.pageKind('/hashtag/x'), 'hashtag');
+  assert.equal(data.pageKind('/gaming'), 'hub');
+});
+
+test('extractPage reads the channel header, tabs and ordered sections', () => {
+  const page = data.extractPage(channelData, '/@lockupchannel');
+  assert.equal(page.kind, 'channel');
+  assert.equal(page.header.title, 'Lockup Channel');
+  assert.equal(page.header.subtitle, '@lockupchannel · 1M subscribers');
+  assert.equal(page.header.banner, 'https://yt3.googleusercontent.com/banner=w1138');
+  assert.deepEqual(
+    page.tabs.map((t) => [t.title, t.selected, t.url]),
+    [
+      ['Home', true, '/@lockupchannel'],
+      ['Videos', false, '/@lockupchannel/videos'],
+    ],
+  );
+  assert.deepEqual(
+    page.sections.map((s) => [s.layout, s.title, s.items.length]),
+    [
+      ['featured', '', 1],
+      ['row', 'Popular videos', 2],
+      ['grid', 'Today', 1],
+      ['grid', '', 1],
+    ],
+  );
+});
+
+test('extractPage uses the query as the search page title', () => {
+  const page = data.extractPage({ contents: {} }, '/results?search_query=lofi+beats');
+  assert.equal(page.header.title, 'lofi beats');
 });

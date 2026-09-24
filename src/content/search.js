@@ -108,6 +108,7 @@
         const videos = items.filter((i) => i.kind === 'video' || i.kind === 'live');
         const channels = items.filter((i) => i.kind === 'channel');
         const shorts = items.filter((i) => i.kind === 'short');
+        const playlists = items.filter((i) => i.kind === 'playlist');
         results.replaceChildren(
           ...[
             videos.length && GT.ui.row({ key: 'videos', title: 'Top Results', items: videos }),
@@ -120,6 +121,8 @@
               }),
             shorts.length &&
               GT.ui.row({ key: 'shorts', title: 'Shorts', items: shorts, variant: 'short' }),
+            playlists.length &&
+              GT.ui.row({ key: 'playlists', title: 'Playlists', items: playlists }),
           ].filter(Boolean),
         );
         if (!items.length) {

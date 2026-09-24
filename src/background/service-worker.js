@@ -11,6 +11,8 @@ const DEFAULTS = {
   heroRotate: true,
   tilt: true,
   exploreRows: true,
+  pages: true,
+  shorts: true,
   reduceTransparency: false,
 };
 

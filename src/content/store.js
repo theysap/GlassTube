@@ -9,8 +9,9 @@
   const state = {
     home: { items: [], shelves: [], at: 0 },
     watch: { videoId: null, related: [], playlist: null, at: 0 },
+    page: { url: null, data: null, at: 0 },
   };
-  const listeners = { home: new Set(), watch: new Set() };
+  const listeners = { home: new Set(), watch: new Set(), page: new Set() };
   const emit = (key) => listeners[key].forEach((fn) => fn(state[key]));
 
   const keyOf = (i) => `${i.kind === 'short' ? 's' : 'v'}:${i.id}`;
@@ -45,12 +46,18 @@
     emit('watch');
   };
 
+  const setPage = (url, data) => {
+    state.page = { url, data, at: Date.now() };
+    emit('page');
+  };
+
   GT.onPageData(({ endpoint, request, data, url }) => {
     if (!data) return;
     const route = GT.route(new URL(url));
     if (endpoint === 'initial' || endpoint === 'navigate') {
       if (route === 'home') setHome(extractFeed(data), false);
       else if (route === 'watch') setWatch(extractWatch(data));
+      else if (route !== 'shorts') setPage(url, data);
     } else if (endpoint === 'browse') {
       if (request.browseId === 'FEwhat_to_watch') setHome(extractFeed(data), false);
       else if (request.continuation && route === 'home') setHome(extractFeed(data), true);
@@ -66,6 +73,15 @@
     },
     get watch() {
       return state.watch;
+    },
+    get page() {
+      return state.page;
+    },
+    /** Re-reads the current browse / search page from YouTube (it grows as more loads). */
+    syncPage: async () => {
+      const data = await GT.bridge('getPageData');
+      if (data) setPage(location.href, data);
+      return !!data;
     },
     subscribe: (key, fn) => {
       listeners[key].add(fn);

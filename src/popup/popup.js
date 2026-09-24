@@ -8,6 +8,8 @@ const DEFAULTS = {
   heroRotate: true,
   tilt: true,
   exploreRows: true,
+  pages: true,
+  shorts: true,
   reduceTransparency: false,
 };
 
@@ -23,6 +25,12 @@ const GROUPS = [
         hint: 'Glass controls with scrub previews',
         requires: 'watch',
       },
+      {
+        key: 'pages',
+        label: 'tvOS Browse Pages',
+        hint: 'Channels, playlists, library, search',
+      },
+      { key: 'shorts', label: 'Cinematic Shorts', hint: 'Ambient glow and glass actions' },
       { key: 'pip', label: 'Picture in Picture', hint: 'Floating player with glass controls' },
     ],
   },

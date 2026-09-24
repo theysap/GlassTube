@@ -45,12 +45,16 @@
     [item.kind === 'short' ? null : item.channel, item.views, item.age].filter(Boolean).join(' · ');
 
   // ── Cards ───────────────────────────────────────────────────────────────
-  const card = (item, { variant = item.kind === 'short' ? 'short' : 'standard' } = {}) => {
+  const variantOf = (item) =>
+    ({ short: 'short', channel: 'channel', playlist: 'playlist' })[item.kind] || 'standard';
+
+  const card = (item, { variant = variantOf(item) } = {}) => {
     const art = h(
       'div.gt-card-art',
       img(thumbSources(item)),
       item.kind === 'live' && h('span.gt-badge.gt-badge-live', 'LIVE'),
-      item.duration && h('span.gt-badge', item.duration),
+      item.duration &&
+        h('span.gt-badge', item.kind === 'playlist' && svg('playlist'), item.duration),
       item.progress > 0 &&
         h('div.gt-progress', h('i', { style: { width: `${Math.min(100, item.progress)}%` } })),
       h('div.gt-glare'),
@@ -66,7 +70,12 @@
       h(
         'div.gt-card-info',
         h('div.gt-card-title', item.title),
-        h('div.gt-card-sub', variant === 'channel' ? item.views || '' : metaLine(item)),
+        h(
+          'div.gt-card-sub',
+          variant === 'channel' || variant === 'playlist'
+            ? [item.channel, variant === 'channel' ? item.views : ''].filter(Boolean).join(' · ')
+            : metaLine(item),
+        ),
       ),
     );
     el.classList.add(`gt-card-${variant}`);
@@ -87,7 +96,13 @@
   };
 
   /** A titled, horizontally scrolling shelf. */
-  const row = ({ key, title, items, variant, href, subtitle }) => {
+  /** The card shape shared by every item in a list (for row / grid sizing), else 'standard'. */
+  const listVariant = (items) => {
+    const kinds = new Set(items.map(variantOf));
+    return kinds.size === 1 ? [...kinds][0] : 'standard';
+  };
+
+  const row = ({ key, title, items, variant = listVariant(items), href, subtitle }) => {
     const track = h('div.gt-row-track', { role: 'list' });
     const el = h(
       'section.gt-row',
@@ -151,6 +166,71 @@
     }
     requestAnimationFrame(() => updateArrows(rowEl));
   };
+
+  // ── Grids and episode lists ─────────────────────────────────────────────
+  const appendOrReplace = (container, items, make) => {
+    const current = [...container.children].map((c) => c.dataset.id);
+    const next = items.map((i) => i.id);
+    const isPrefix = current.length && current.every((id, i) => next[i] === id);
+    if (isPrefix && current.length === next.length) return;
+    if (isPrefix)
+      items.slice(current.length).forEach((i, n) => container.append(make(i, current.length + n)));
+    else container.replaceChildren(...items.map((i, n) => make(i, n)));
+  };
+
+  /** A titled, wrapping tvOS grid ("Library" style). */
+  const grid = ({ key, title, items, subtitle }) => {
+    const body = h('div.gt-grid', { dataset: { variant: listVariant(items) } });
+    const el = h(
+      'section.gt-grid-section',
+      { dataset: { key } },
+      title &&
+        h(
+          'header.gt-row-head',
+          h('h2.gt-row-title', title),
+          subtitle && h('span.gt-row-subtitle', subtitle),
+        ),
+      body,
+    );
+    appendOrReplace(body, items, (i) => card(i));
+    return el;
+  };
+  const setGridItems = (el, items) => {
+    const body = el.querySelector('.gt-grid');
+    body.dataset.variant = listVariant(items);
+    appendOrReplace(body, items, (i) => card(i));
+  };
+
+  /** A numbered episode row, as in the TV app's season lists (playlists). */
+  const episode = (item, index) =>
+    GT.linkify(
+      h(
+        'a.gt-episode.gt-focusable',
+        {
+          href: new URL(item.url || `/watch?v=${item.id}`, location.origin).href,
+          dataset: { id: item.id },
+        },
+        h('span.gt-ep-index', String(index + 1)),
+        h(
+          'div.gt-card-art',
+          img(thumbSources(item)),
+          item.duration && h('span.gt-badge', item.duration),
+          item.progress > 0 &&
+            h('div.gt-progress', h('i', { style: { width: `${Math.min(100, item.progress)}%` } })),
+          h('div.gt-glare'),
+        ),
+        h('div.gt-ep-info', h('div.gt-ep-title', item.title), h('div.gt-card-sub', metaLine(item))),
+      ),
+    );
+
+  const episodes = ({ key, items }) => {
+    const body = h('div.gt-episodes');
+    const el = h('section.gt-episode-section', { dataset: { key } }, body);
+    appendOrReplace(body, items, episode);
+    return el;
+  };
+  const setEpisodeItems = (el, items) =>
+    appendOrReplace(el.querySelector('.gt-episodes'), items, episode);
 
   // ── Sidebar ─────────────────────────────────────────────────────────────
   const NAV = [
@@ -296,5 +376,19 @@
     };
   };
 
-  GT.ui = { img, thumbSources, metaLine, card, row, setRowItems, sidebar, enableTilt, focusEngine };
+  GT.ui = {
+    img,
+    thumbSources,
+    metaLine,
+    card,
+    row,
+    setRowItems,
+    grid,
+    setGridItems,
+    episodes,
+    setEpisodeItems,
+    sidebar,
+    enableTilt,
+    focusEngine,
+  };
 })();

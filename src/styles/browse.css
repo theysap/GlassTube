@@ -1,0 +1,422 @@
+/*
+ * GlassTube — browse pages (channels, playlists, library, feeds, search, hubs) and Shorts.
+ */
+
+html.gt-browse-active,
+html.gt-browse-active body {
+  overflow: hidden !important;
+}
+
+html.gt-browse-active ytd-page-manager > :is(ytd-browse, ytd-search):not([hidden]) {
+  visibility: hidden;
+}
+
+.gt-browse .gt-page {
+  position: relative;
+  z-index: 1;
+  min-height: 60vh;
+}
+
+.gt-page-head {
+  position: relative;
+  padding: 0 var(--gt-right) 0 var(--gt-left);
+  animation: gt-rise 0.6s var(--gt-ease) both;
+}
+
+.gt-page-title {
+  margin: 0;
+  font-size: clamp(34px, 3.4vw, 62px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  text-shadow: 0 2px 30px rgb(0 0 0 / 40%);
+}
+
+.gt-page-sub {
+  margin: 8px 0 0;
+  color: var(--gt-text-2);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.gt-page-desc {
+  display: -webkit-box;
+  max-width: 760px;
+  margin: 10px 0 0;
+  overflow: hidden;
+  color: var(--gt-text-2);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.gt-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.gt-page-actions:empty {
+  display: none;
+}
+
+.gt-subscribe[hidden] {
+  display: none;
+}
+
+.gt-eyebrow {
+  margin-bottom: 8px;
+  color: var(--gt-text-3);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Channel */
+.gt-channel-head {
+  padding: 0;
+}
+
+.gt-channel-banner {
+  height: clamp(150px, 21vw, 340px);
+  overflow: hidden;
+  background: linear-gradient(135deg, rgb(60 70 110 / 50%), rgb(20 20 30 / 60%));
+  mask-image: linear-gradient(180deg, #000 40%, transparent 100%);
+}
+
+.gt-channel-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s var(--gt-ease);
+}
+
+.gt-channel-banner img.gt-img-ready {
+  opacity: 1;
+}
+
+.gt-channel-id {
+  position: relative;
+  display: flex;
+  gap: clamp(20px, 2.4vw, 40px);
+  align-items: flex-end;
+  margin-top: clamp(-90px, -5vw, -50px);
+  padding: 0 var(--gt-right) 0 var(--gt-left);
+}
+
+.gt-channel-avatar {
+  flex: none;
+  width: clamp(96px, 9vw, 150px);
+  height: clamp(96px, 9vw, 150px);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px rgb(255 255 255 / 14%),
+    0 24px 50px -16px rgb(0 0 0 / 80%);
+}
+
+.gt-channel-text {
+  min-width: 0;
+  padding-bottom: 4px;
+}
+
+/* Playlist collection */
+.gt-collection-head {
+  display: grid;
+  grid-template-columns: minmax(260px, 32vw) 1fr;
+  gap: clamp(28px, 3.4vw, 60px);
+  align-items: end;
+  padding-top: clamp(70px, 9vh, 120px);
+}
+
+.gt-collection-art {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #15151b;
+  box-shadow:
+    0 -10px 0 -5px rgb(255 255 255 / 20%),
+    0 -20px 0 -10px rgb(255 255 255 / 9%),
+    0 40px 80px -30px rgb(0 0 0 / 90%);
+}
+
+.gt-collection-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Feeds / search / hubs */
+.gt-simple-head {
+  padding-top: clamp(70px, 10vh, 130px);
+}
+
+/* Tabs */
+.gt-tabs {
+  position: sticky;
+  top: 16px;
+  z-index: 4;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 28px var(--gt-right) 6px var(--gt-left);
+  padding: 5px;
+  border-radius: 999px;
+}
+
+.gt-tab {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 999px;
+  color: var(--gt-text-2);
+  font: 600 15px/1 var(--gt-font);
+  cursor: pointer;
+  transition:
+    background 0.2s var(--gt-ease),
+    color 0.2s var(--gt-ease),
+    transform 0.3s var(--gt-spring);
+}
+
+.gt-tab:hover,
+.gt-tab:focus-visible {
+  color: var(--gt-text);
+  background: rgb(255 255 255 / 14%);
+}
+
+.gt-tab[aria-current='page'] {
+  color: #000;
+  background: #f5f5f7;
+}
+
+/* Sections */
+.gt-sections {
+  padding-top: 18px;
+}
+
+.gt-browse[data-kind='channel'] .gt-sections,
+.gt-browse[data-kind='playlist'] .gt-sections {
+  padding-top: 26px;
+}
+
+.gt-grid-section {
+  padding: 8px var(--gt-right) 30px var(--gt-left);
+  animation: gt-rise 0.6s var(--gt-ease) both;
+}
+
+.gt-grid-section .gt-row-head {
+  padding: 0;
+}
+
+.gt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(220px, 17vw, 340px), 1fr));
+  gap: clamp(26px, 2.6vw, 48px) clamp(18px, 1.6vw, 32px);
+  padding-top: 20px;
+}
+
+.gt-grid[data-variant='short'] {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 11vw, 220px), 1fr));
+}
+
+.gt-grid[data-variant='channel'] {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 9vw, 180px), 1fr));
+}
+
+.gt-grid .gt-card {
+  width: auto;
+}
+
+/* Playlist cards read as a stack of artwork. */
+.gt-card-playlist {
+  padding-top: 12px;
+}
+
+.gt-card-playlist .gt-card-art {
+  box-shadow:
+    0 -7px 0 -4px rgb(255 255 255 / 22%),
+    0 -13px 0 -8px rgb(255 255 255 / 10%),
+    0 12px 26px -16px rgb(0 0 0 / 90%);
+}
+
+.gt-badge .gt-icon {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  vertical-align: -1px;
+}
+
+/* Channel trailer */
+.gt-featured {
+  display: grid;
+  grid-template-columns: minmax(300px, 40vw) 1fr;
+  gap: clamp(24px, 3vw, 56px);
+  align-items: center;
+  padding: 16px var(--gt-right) 30px var(--gt-left);
+}
+
+.gt-featured .gt-card {
+  width: auto;
+}
+
+.gt-featured .gt-card-info {
+  display: none;
+}
+
+.gt-featured-title {
+  margin: 0 0 6px;
+  font-size: clamp(22px, 2vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.gt-featured .gt-btn {
+  margin-top: 20px;
+}
+
+/* Episode list (playlists) */
+.gt-episodes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 1500px;
+  padding: 0 var(--gt-right) 30px calc(var(--gt-left) - 16px);
+}
+
+.gt-episode {
+  display: grid;
+  grid-template-columns: 40px clamp(180px, 15vw, 280px) 1fr;
+  gap: 22px;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 22px;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+  transition:
+    background 0.25s var(--gt-ease),
+    transform 0.4s var(--gt-spring);
+}
+
+.gt-episode:focus-visible,
+.gt-surface:not(.gt-kbd) .gt-episode:hover {
+  background: rgb(255 255 255 / 8%);
+  transform: scale(1.01);
+}
+
+.gt-episode:focus-visible .gt-glare,
+.gt-surface:not(.gt-kbd) .gt-episode:hover .gt-glare {
+  opacity: 1;
+}
+
+.gt-ep-index {
+  color: var(--gt-text-3);
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.gt-ep-title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* ── Shorts ────────────────────────────────────────────────────────────────── */
+html.gt-shorts-active ytd-app {
+  --ytd-masthead-height: 0px !important;
+
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+
+html.gt-shorts-active body {
+  background: var(--gt-bg) !important;
+}
+
+html.gt-shorts-active #masthead-container.ytd-app {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-110%);
+}
+
+html.gt-shorts-active ytd-page-manager#page-manager {
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* GlassTube draws its own ambient glow behind Shorts. */
+html.gt-shorts-active ytd-shorts :is(#shorts-cinematic-container, #cinematic-container) {
+  display: none !important;
+}
+
+html.gt-shorts-active tp-yt-app-drawer,
+html.gt-shorts-active ytd-mini-guide-renderer {
+  display: none !important;
+}
+
+html.gt-shorts-active ytd-shorts,
+html.gt-shorts-active ytd-shorts #shorts-container,
+html.gt-shorts-active ytd-shorts #shorts-inner-container {
+  background: transparent !important;
+}
+
+html.gt-shorts-active
+  ytd-shorts
+  :is(#shorts-player, .reel-video-in-sequence-new, #player-container) {
+  overflow: hidden;
+  border-radius: 28px !important;
+}
+
+html.gt-shorts-active ytd-reel-video-renderer #shorts-player,
+html.gt-shorts-active ytd-reel-video-renderer .player-container {
+  box-shadow:
+    0 50px 100px -30px rgb(0 0 0 / 90%),
+    0 0 0 1px rgb(255 255 255 / 8%) !important;
+}
+
+html.gt-shorts-active reel-action-bar-view-model button,
+html.gt-shorts-active ytd-shorts .navigation-button button,
+html.gt-shorts-active ytd-reel-video-renderer #actions button {
+  border: 1px solid var(--gt-glass-border) !important;
+  background: var(--gt-glass) !important;
+  backdrop-filter: var(--gt-blur);
+  box-shadow: var(--gt-glass-rim) !important;
+  transition: transform 0.3s var(--gt-spring) !important;
+}
+
+html.gt-shorts-active reel-action-bar-view-model button:hover,
+html.gt-shorts-active ytd-shorts .navigation-button button:hover {
+  transform: scale(1.08);
+}
+
+#gt-shorts-stage .gt-ambient {
+  position: fixed;
+  inset: -10%;
+  z-index: 0;
+}
+
+#gt-shorts-stage .gt-ambient img {
+  position: absolute;
+  inset: 0;
+}
+
+#gt-shorts-stage .gt-ambient img.gt-img-ready {
+  opacity: 0.5;
+}
+
+#gt-shorts-stage .gt-sidebar {
+  z-index: 2050;
+}

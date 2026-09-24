@@ -89,6 +89,11 @@
       ...feed.items.filter((i) => i.kind === 'short'),
     ];
     push({ key: 'shorts', title: 'Shorts', items: shorts, variant: 'short', href: '/shorts' });
+    push({
+      key: 'playlists',
+      title: 'Mixes & Playlists',
+      items: feed.items.filter((i) => i.kind === 'playlist'),
+    });
     const live = videos.filter((i) => i.kind === 'live');
     if (live.length >= 3) push({ key: 'live', title: 'Live Now', items: live });
     feed.shelves
