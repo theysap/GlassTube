@@ -14,7 +14,7 @@ const DEFAULTS = {
   pages: true,
   shorts: true,
   reduceTransparency: false,
-  heroStyle: 'artwork',
+  heroStyle: 'calm',
 };
 
 const updateBadge = async (enabled) => {

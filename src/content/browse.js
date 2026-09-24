@@ -94,6 +94,34 @@
       label,
     );
 
+  /** Description clamped to two lines, with a More / Less toggle when there is more to read. */
+  const description = (text) => {
+    if (!text) return null;
+    const p = h('p.gt-page-desc', text);
+    const label = h('span', 'More');
+    const toggle = h(
+      'button.gt-desc-toggle.gt-focusable',
+      {
+        type: 'button',
+        'aria-expanded': 'false',
+        onclick: () => {
+          const open = p.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', String(open));
+          label.textContent = open ? 'Less' : 'More';
+          if (!open) p.scrollTop = 0;
+        },
+      },
+      label,
+      svg('chevronDown'),
+    );
+    // Only offer the toggle when the two-line clamp actually hides something.
+    toggle.hidden = true;
+    requestAnimationFrame(() => {
+      toggle.hidden = p.scrollHeight <= p.clientHeight + 2;
+    });
+    return h('div.gt-desc', p, toggle);
+  };
+
   const channelHeader = (page) => {
     const { header } = page;
     return h(
@@ -110,7 +138,7 @@
           'div.gt-channel-text',
           h('h1.gt-page-title', header.title),
           header.subtitle && h('p.gt-page-sub', header.subtitle),
-          header.description && h('p.gt-page-desc', header.description),
+          description(header.description),
           h('div.gt-page-actions', subscribeProxy()),
         ),
       ),
@@ -149,7 +177,7 @@
         ),
         h('h1.gt-page-title', header.title),
         header.subtitle && h('p.gt-page-sub', header.subtitle),
-        header.description && h('p.gt-page-desc', header.description),
+        description(header.description),
         h(
           'div.gt-page-actions',
           playUrl &&

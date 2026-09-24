@@ -424,7 +424,9 @@
     }
     header.channelId = data?.metadata?.channelMetadataRenderer?.externalId || null;
     if (!header.title && meta) header.title = meta.title || '';
-    if (!header.description && meta?.description) header.description = meta.description;
+    if (meta?.description && meta.description.length > header.description.length) {
+      header.description = meta.description;
+    }
     if (!header.avatar && meta?.avatar) header.avatar = bestImage(meta.avatar);
     return header;
   };

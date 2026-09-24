@@ -47,8 +47,46 @@ html.gt-browse-active ytd-page-manager > :is(ytd-browse, ytd-search):not([hidden
   color: var(--gt-text-2);
   font-size: 15px;
   line-height: 1.45;
+  white-space: pre-line;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.gt-page-desc.is-open {
+  display: block;
+  max-height: 40vh;
+  overflow-y: auto;
+  -webkit-line-clamp: unset;
+}
+
+.gt-desc-toggle {
+  all: unset;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  margin-top: 6px;
+  color: var(--gt-text);
+  font: 600 14px/1.4 var(--gt-font);
+  cursor: pointer;
+}
+
+.gt-desc-toggle[hidden] {
+  display: none;
+}
+
+.gt-desc-toggle:hover,
+.gt-desc-toggle:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.gt-desc-toggle .gt-icon {
+  font-size: 12px;
+  transition: transform 0.25s var(--gt-ease);
+}
+
+.gt-desc-toggle[aria-expanded='true'] .gt-icon {
+  transform: rotate(180deg);
 }
 
 .gt-page-actions {
@@ -358,8 +396,22 @@ html.gt-shorts-active ytd-page-manager#page-manager {
 }
 
 /* GlassTube draws its own ambient glow behind Shorts. */
-html.gt-shorts-active ytd-shorts :is(#shorts-cinematic-container, #cinematic-container) {
+html.gt-shorts-active
+  ytd-shorts
+  :is(#shorts-cinematic-container, #cinematic-container, [id^='cinematic-shorts']) {
   display: none !important;
+}
+
+/* The Shorts page is sized for YouTube's masthead; with it hidden, fill the whole viewport. */
+html.gt-shorts-active ytd-shorts {
+  top: 0 !important;
+  height: 100vh !important;
+  margin-top: 0 !important;
+}
+
+html.gt-shorts-active ytd-shorts :is(#shorts-container, #shorts-panel-container) {
+  height: 100vh !important;
+  max-height: none !important;
 }
 
 html.gt-shorts-active tp-yt-app-drawer,

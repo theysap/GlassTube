@@ -3,6 +3,17 @@
 All notable changes to GlassTube are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
 
+## [0.8.2] - 2026-09-24
+
+### Changed
+
+- **Calm** is now the default Top Shelf background (Artwork remains one tap away in the popup).
+
+### Fixed
+
+- Long channel and playlist descriptions can be expanded with a **More / Less** toggle (shown only when the text is actually cut off), using the full description from the channel's metadata rather than the header preview.
+- Shorts: removed the dark bands above and below the player — YouTube's cinematic scrim is hidden and the Shorts page now fills the viewport without the masthead offset.
+
 ## [0.8.1] - 2026-09-24
 
 ### Changed
@@ -111,6 +122,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[0.8.2]: https://github.com/theysap/GlassTube/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/theysap/GlassTube/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/theysap/GlassTube/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/theysap/GlassTube/compare/v0.6.0...v0.7.0
