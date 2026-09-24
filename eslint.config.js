@@ -37,6 +37,11 @@ module.exports = [
     },
   },
   {
+    // Scripts that drive a real browser pass callbacks into page.evaluate().
+    files: ['scripts/smoke.mjs', 'scripts/screenshots.mjs'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
+  {
     files: ['eslint.config.js'],
     languageOptions: { sourceType: 'commonjs' },
   },

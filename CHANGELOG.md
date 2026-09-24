@@ -1,7 +1,21 @@
 # Changelog
 
 All notable changes to GlassTube are documented here.
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`) and every version is published as a GitHub Release.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
+
+## [0.2.0] - 2026-09-24
+
+### Added
+
+- **Top Shelf home** — a full-screen Apple TV-style layer over youtube.com: a rotating hero with Play / Channel buttons, capsule page indicators, Ken Burns motion, scroll parallax and an ambient colour glow from the artwork.
+- Shelves: Continue Watching (with progress), Top Picks, From Your Subscriptions, Shorts, Live Now, YouTube's own shelves, Watch Later, Explore categories and endless “More for You” rows paged in from YouTube's native feed.
+- tvOS cards: lift on focus, parallax tilt and specular glare following the cursor, duration / LIVE badges and resume bars.
+- Floating glass sidebar (Search, Home, Subscriptions, Shorts, You, History, Watch Later, Classic Home).
+- Remote-style spatial navigation with the arrow keys; `/` opens search.
+- Full-screen search with live results (videos, channels, Shorts) and recent searches.
+- Explore rows fill the home screen when the personal feed is empty (signed out or history paused).
+- JSON data layer that normalises YouTube's `videoRenderer`, `lockupViewModel`, Shorts, playlist and channel renderers, with unit tests.
+- `npm run smoke` — drives real youtube.com in Chrome for Testing with the extension loaded; `npm run bump -- x.y.z` keeps versions in sync.
 
 ## [0.1.0] - 2026-09-24
 
@@ -14,4 +28,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
-[0.1.0]: https://github.com/theysap/GlassTube/releases/tag/v0.1.0
+[0.2.0]: https://github.com/theysap/GlassTube/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/theysap/GlassTube/commits/v0.1.0

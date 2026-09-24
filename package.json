@@ -1,6 +1,6 @@
 {
   "name": "glasstube",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "A Chrome extension that reimagines YouTube with a cinematic, Apple TV-inspired Liquid Glass interface.",
   "license": "MIT",
@@ -29,7 +29,9 @@
     "screenshots": "node scripts/screenshots.mjs",
     "build": "node scripts/build.mjs",
     "release:local": "npm run assets && npm run build -- --store",
-    "check": "npm run lint && npm test && npm run validate"
+    "check": "npm run lint && npm test && npm run validate",
+    "bump": "node scripts/bump.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "lint-staged": {
     "*.{js,mjs,cjs}": [
@@ -51,6 +53,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
     "prettier": "^3.9.9",
+    "puppeteer": "^25.12.0",
     "sharp": "^0.35.4",
     "stylelint": "^17.15.0",
     "stylelint-config-standard": "^40.0.0"

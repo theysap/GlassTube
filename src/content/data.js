@@ -1,0 +1,354 @@
+/**
+ * GlassTube data layer.
+ *
+ * YouTube ships its page data as JSON (ytInitialData on first load, innertube responses on
+ * SPA navigations). Its shape shifts often, so instead of hard-coding paths this walks the
+ * tree and normalises every renderer it recognises into a flat `Item`:
+ *
+ *   { id, kind: 'video'|'live'|'short'|'channel', title, channel, channelUrl, channelId,
+ *     avatar, thumb, duration, views, age, progress, url, selected }
+ *
+ * The parsing half is pure and unit-tested in Node; the fetching half only runs in the page.
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else {
+    const GT = (root.GlassTube = root.GlassTube || {});
+    GT.data = Object.assign(GT.data || {}, api, browserApi(api));
+  }
+
+  function browserApi(api) {
+    const cache = new Map();
+    const TTL = 10 * 60 * 1000;
+
+    /** Loads a youtube.com page and returns its ytInitialData (same-origin, user's session). */
+    const fetchInitialData = async (path, { signal, ttl = TTL } = {}) => {
+      const hit = cache.get(path);
+      if (hit && Date.now() - hit.at < ttl) return hit.data;
+      const res = await fetch(path, { credentials: 'same-origin', signal });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = api.parseInitialData(await res.text());
+      if (data) cache.set(path, { at: Date.now(), data });
+      return data;
+    };
+
+    const fetchItems = async (path, opts) => {
+      const data = await fetchInitialData(path, opts);
+      return data ? api.extractItems(data) : [];
+    };
+
+    return { fetchInitialData, fetchItems, clearCache: () => cache.clear() };
+  }
+})(globalThis, function () {
+  const THUMB_HOST = 'https://i.ytimg.com/vi/';
+  const SKIP_KEYS = new Set([
+    'adSlotRenderer',
+    'promotedSparklesWebRenderer',
+    'inFeedAdLayoutRenderer',
+    'frameworkUpdates',
+    'topbar',
+    'microformat',
+  ]);
+
+  const text = (t) => {
+    if (t == null) return '';
+    if (typeof t === 'string') return t;
+    if (typeof t.simpleText === 'string') return t.simpleText;
+    if (typeof t.content === 'string') return t.content;
+    if (Array.isArray(t.runs)) return t.runs.map((r) => r.text || '').join('');
+    return '';
+  };
+
+  const bestImage = (src) => {
+    const list = Array.isArray(src) ? src : src?.thumbnails || src?.sources || src?.image?.sources;
+    if (!Array.isArray(list) || !list.length) return '';
+    const best = list.reduce((a, b) => ((b.width || 0) > (a.width || 0) ? b : a));
+    let url = best.url || '';
+    if (url.startsWith('//')) url = 'https:' + url;
+    return url;
+  };
+
+  /** Depth-first search for the first value satisfying `test(value, key)`. */
+  const find = (node, test, depth = 0) => {
+    if (!node || typeof node !== 'object' || depth > 24) return undefined;
+    for (const [key, value] of Object.entries(node)) {
+      if (test(value, key)) return value;
+      if (value && typeof value === 'object') {
+        const hit = find(value, test, depth + 1);
+        if (hit !== undefined) return hit;
+      }
+    }
+    return undefined;
+  };
+  const findAll = (node, test, out = [], depth = 0) => {
+    if (!node || typeof node !== 'object' || depth > 24) return out;
+    for (const [key, value] of Object.entries(node)) {
+      if (test(value, key)) out.push(value);
+      else if (value && typeof value === 'object') findAll(value, test, out, depth + 1);
+    }
+    return out;
+  };
+
+  const channelFrom = (node) => {
+    const endpoint = find(node, (v, k) => k === 'browseEndpoint' && v && v.browseId);
+    return {
+      channelId: endpoint?.browseId?.startsWith('UC') ? endpoint.browseId : null,
+      channelUrl:
+        endpoint?.canonicalBaseUrl ||
+        (endpoint?.browseId?.startsWith('UC') ? `/channel/${endpoint.browseId}` : null),
+    };
+  };
+
+  const parseDuration = (s) => {
+    if (!s || !/^\d+(:\d{2}){1,2}$/.test(s)) return null;
+    return s.split(':').reduce((acc, n) => acc * 60 + Number(n), 0);
+  };
+
+  const isLiveText = (s) => /^(live|live now)$/i.test(String(s || '').trim());
+
+  // ── Renderer adapters ────────────────────────────────────────────────────
+  const fromVideoRenderer = (r) => {
+    if (!r || !r.videoId) return null;
+    const byline = r.ownerText || r.shortBylineText || r.longBylineText;
+    const overlays = r.thumbnailOverlays || [];
+    const timeStatus = overlays.find(
+      (o) => o.thumbnailOverlayTimeStatusRenderer,
+    )?.thumbnailOverlayTimeStatusRenderer;
+    const live =
+      timeStatus?.style === 'LIVE' ||
+      (r.badges || []).some((b) => /LIVE/.test(b.metadataBadgeRenderer?.style || '')) ||
+      isLiveText(text(timeStatus?.text));
+    const resume = overlays.find(
+      (o) => o.thumbnailOverlayResumePlaybackRenderer,
+    )?.thumbnailOverlayResumePlaybackRenderer;
+    const avatarSrc =
+      r.channelThumbnailSupportedRenderers?.channelThumbnailWithLinkRenderer?.thumbnail ||
+      r.channelThumbnail;
+    const duration = text(r.lengthText) || (live ? '' : text(timeStatus?.text));
+    return {
+      id: r.videoId,
+      kind: live ? 'live' : 'video',
+      title: text(r.title) || text(r.headline),
+      channel: text(byline),
+      ...channelFrom(byline),
+      avatar: bestImage(avatarSrc),
+      thumb: bestImage(r.thumbnail),
+      duration: parseDuration(duration.trim()) != null ? duration.trim() : '',
+      views: text(r.shortViewCountText) || text(r.viewCountText),
+      age: text(r.publishedTimeText),
+      progress: resume?.percentDurationWatched ?? null,
+      url:
+        r.navigationEndpoint?.commandMetadata?.webCommandMetadata?.url || `/watch?v=${r.videoId}`,
+      selected: !!r.selected,
+    };
+  };
+
+  const fromLockup = (l) => {
+    if (!l || !l.contentId) return null;
+    if (l.contentType && l.contentType !== 'LOCKUP_CONTENT_TYPE_VIDEO') return null;
+    const meta = l.metadata?.lockupMetadataViewModel || {};
+    const rows = meta.metadata?.contentMetadataViewModel?.metadataRows || [];
+    const parts = rows.map((row) =>
+      (row.metadataParts || []).map((p) => text(p.text)).filter(Boolean),
+    );
+    const [channel = ''] = parts[0] || [];
+    const [views = '', age = ''] = parts.slice(1).flat();
+    const badges = findAll(l.contentImage, (v, k) => k === 'thumbnailBadgeViewModel');
+    const badgeTexts = badges.map((b) => text(b.text));
+    const live = badges.some((b) => /LIVE/.test(b.badgeStyle || '')) || badgeTexts.some(isLiveText);
+    const duration = badgeTexts.find((t) => parseDuration(t) != null) || '';
+    const progress = find(l.contentImage, (v, k) => k === 'startPercent' && typeof v === 'number');
+    const url = find(
+      l.rendererContext,
+      (v, k) => k === 'url' && typeof v === 'string' && v.startsWith('/watch'),
+    );
+    return {
+      id: l.contentId,
+      kind: live ? 'live' : 'video',
+      title: text(meta.title),
+      channel,
+      ...(meta.image ? channelFrom(meta.image) : channelFrom(meta.metadata)),
+      avatar: bestImage(find(meta.image, (v, k) => k === 'sources' && Array.isArray(v))),
+      thumb: bestImage(l.contentImage?.thumbnailViewModel?.image),
+      duration,
+      views,
+      age,
+      progress: progress ?? null,
+      url: url || `/watch?v=${l.contentId}`,
+      selected: false,
+    };
+  };
+
+  const fromReel = (r) => {
+    if (!r || !r.videoId) return null;
+    return {
+      id: r.videoId,
+      kind: 'short',
+      title: text(r.headline),
+      views: text(r.viewCountText),
+      thumb: bestImage(r.thumbnail),
+      url: `/shorts/${r.videoId}`,
+    };
+  };
+
+  const fromShortsLockup = (s) => {
+    const id =
+      s?.onTap?.innertubeCommand?.reelWatchEndpoint?.videoId ||
+      (s?.entityId || '').replace(/^shorts-shelf-item-/, '');
+    if (!id) return null;
+    return {
+      id,
+      kind: 'short',
+      title: text(s.overlayMetadata?.primaryText) || text(s.accessibilityText).split(',')[0],
+      views: text(s.overlayMetadata?.secondaryText),
+      thumb: bestImage(s.thumbnail || s.thumbnailViewModel?.thumbnailViewModel?.image),
+      url: `/shorts/${id}`,
+    };
+  };
+
+  const fromChannel = (c) => {
+    if (!c || !c.channelId) return null;
+    return {
+      id: c.channelId,
+      kind: 'channel',
+      title: text(c.title),
+      channelId: c.channelId,
+      channelUrl:
+        c.navigationEndpoint?.browseEndpoint?.canonicalBaseUrl || `/channel/${c.channelId}`,
+      avatar: bestImage(c.thumbnail),
+      views: text(c.videoCountText) || text(c.subscriberCountText),
+      url: c.navigationEndpoint?.browseEndpoint?.canonicalBaseUrl || `/channel/${c.channelId}`,
+    };
+  };
+
+  const ADAPTERS = {
+    videoRenderer: fromVideoRenderer,
+    gridVideoRenderer: fromVideoRenderer,
+    compactVideoRenderer: fromVideoRenderer,
+    playlistVideoRenderer: fromVideoRenderer,
+    playlistPanelVideoRenderer: fromVideoRenderer,
+    lockupViewModel: fromLockup,
+    reelItemRenderer: fromReel,
+    shortsLockupViewModel: fromShortsLockup,
+    channelRenderer: fromChannel,
+  };
+  const SHELVES = new Set(['richShelfRenderer', 'shelfRenderer', 'reelShelfRenderer']);
+
+  const walk = (node, onItem, onShelf, depth = 0) => {
+    if (!node || typeof node !== 'object' || depth > 60) return;
+    if (Array.isArray(node)) {
+      for (const child of node) walk(child, onItem, onShelf, depth + 1);
+      return;
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (SKIP_KEYS.has(key)) continue;
+      if (ADAPTERS[key]) {
+        const item = ADAPTERS[key](value);
+        if (item && item.title) onItem(item);
+      } else if (onShelf && SHELVES.has(key)) {
+        onShelf(value);
+      } else if (value && typeof value === 'object') {
+        walk(value, onItem, onShelf, depth + 1);
+      }
+    }
+  };
+
+  const dedupe = () => {
+    const seen = new Set();
+    return (item) => {
+      const key = `${item.kind === 'short' ? 's' : 'v'}:${item.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    };
+  };
+
+  /** Every recognised item in `node`, flattened and de-duplicated, in document order. */
+  const extractItems = (node) => {
+    const out = [];
+    const fresh = dedupe();
+    walk(node, (item) => fresh(item) && out.push(item));
+    return out;
+  };
+
+  /** Main feed items plus titled shelves (Shorts, Breaking news…) kept separate. */
+  const extractFeed = (node) => {
+    const items = [];
+    const shelves = [];
+    const fresh = dedupe();
+    walk(
+      node,
+      (item) => fresh(item) && items.push(item),
+      (shelf) => {
+        const shelfItems = extractItems(shelf.contents || shelf.content || shelf.items || shelf);
+        if (!shelfItems.length) return;
+        shelves.push({
+          title: text(shelf.title) || (shelfItems.every((i) => i.kind === 'short') ? 'Shorts' : ''),
+          shorts: shelfItems.every((i) => i.kind === 'short'),
+          items: shelfItems,
+        });
+      },
+    );
+    return { items, shelves };
+  };
+
+  /** Related videos and playlist entries from a watch page (ytInitialData or /next). */
+  const extractWatch = (data) => {
+    const results = data?.contents?.twoColumnWatchNextResults;
+    const continuation = data?.onResponseReceivedEndpoints;
+    const playlist = results?.playlist?.playlist;
+    return {
+      videoId: data?.currentVideoEndpoint?.watchEndpoint?.videoId || null,
+      related: extractItems(results?.secondaryResults || continuation || {}).filter(
+        (i) => i.kind !== 'channel',
+      ),
+      playlist: playlist
+        ? {
+            title: text(playlist.title),
+            id: playlist.playlistId,
+            items: extractItems(playlist.contents || []),
+          }
+        : null,
+      isContinuation: !results && !!continuation,
+    };
+  };
+
+  /** Pulls `ytInitialData` out of a youtube.com HTML document. */
+  const parseInitialData = (html) => {
+    const markers = ['var ytInitialData = ', 'window["ytInitialData"] = ', 'ytInitialData = '];
+    for (const marker of markers) {
+      const start = html.indexOf(marker);
+      if (start === -1) continue;
+      const from = start + marker.length;
+      const end = html.indexOf(';</script>', from);
+      if (end === -1) continue;
+      let raw = html.slice(from, end).trim();
+      if (raw.startsWith("'")) {
+        // Some variants ship the JSON as an escaped JS string literal.
+        raw = raw
+          .slice(1, -1)
+          .replace(/\\x([0-9a-f]{2})/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
+      }
+      try {
+        return JSON.parse(raw);
+      } catch {
+        /* try the next marker */
+      }
+    }
+    return null;
+  };
+
+  const thumbUrl = (id, quality = 'hqdefault') => `${THUMB_HOST}${id}/${quality}.jpg`;
+
+  return {
+    text,
+    bestImage,
+    parseDuration,
+    extractItems,
+    extractFeed,
+    extractWatch,
+    parseInitialData,
+    thumbUrl,
+  };
+});
