@@ -13,9 +13,8 @@ process.stdout.write(`${section}
 
 ### Install
 
-1. Download **glasstube-v${version}.zip** below and unzip it.
-2. Open \`chrome://extensions\`, turn on **Developer mode** and choose **Load unpacked**.
-3. Select the unzipped folder, then open [youtube.com](https://www.youtube.com).
+Install GlassTube from the **Chrome Web Store**, or run it from source (clone the repo, then \`chrome://extensions\` → **Developer mode** → **Load unpacked** → the \`src/\` folder).
+See the [README](https://github.com/theysap/GlassTube#install) and the [user manual](https://github.com/theysap/GlassTube/blob/master/USERMANUAL.md).
 
-Full history: [CHANGELOG.md](https://github.com/theysap/GlassTube/blob/main/CHANGELOG.md)
+Full history: [CHANGELOG.md](https://github.com/theysap/GlassTube/blob/master/CHANGELOG.md)
 `);

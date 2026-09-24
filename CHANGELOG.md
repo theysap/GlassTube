@@ -1,7 +1,32 @@
 # Changelog
 
 All notable changes to GlassTube are documented here.
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (subject `vX.Y.Z`, details in the body); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
+
+## [1.0.0] - 2026-09-24
+
+The first public release of GlassTube — YouTube, reimagined for the big screen with an Apple TV–inspired Liquid Glass interface.
+
+### Highlights
+
+- **Top Shelf home** with a rotating hero (Calm or Artwork background), sideways shelves, parallax focus tilt and remote-style arrow-key navigation.
+- **Cinematic watch page** with tvOS glass player controls, storyboard scrub previews, Up Next, comments and Shorts shelves.
+- **Picture in Picture** in a floating window with glass controls.
+- **Every page redesigned** — channels, playlists (incl. Watch Later and Liked), Subscriptions, History, You, search, hashtags, hubs — plus cinematic Shorts.
+- **Full-screen search** with live results and recent searches.
+- **Live settings** for every feature, Reduce Transparency and per-page Classic View.
+- A complete [user manual](USERMANUAL.md).
+
+### Changed
+
+- **New logo** — a Liquid Glass screen on a lavender field, drawn as vector art with a 4096 px master and a simplified mark for 16–32 px toolbar sizes.
+- The release pipeline now produces store-compliant assets: five opaque 1280×800 screenshots, 440×280 and 1400×560 promo tiles with the new logo, the 128 px store icon and 4K logo masters — all only inside the git-ignored `chrome/v1.0.0/` bundle.
+- GitHub Releases carry release notes only; the extension zip is produced solely for the Chrome Web Store, and CI no longer uploads it.
+- Store screenshots feature the official Formula 1 YouTube channel.
+
+### Fixed
+
+- Cards from a channel's own pages (Videos tab, channel shelves) showed the view count in place of the channel name.
 
 ## [0.8.4] - 2026-09-24
 
@@ -137,6 +162,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[1.0.0]: https://github.com/theysap/GlassTube/releases/tag/v1.0.0
 [0.8.4]: https://github.com/theysap/GlassTube/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/theysap/GlassTube/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/theysap/GlassTube/compare/v0.8.1...v0.8.2

@@ -189,3 +189,13 @@ test('extractPage uses the query as the search page title', () => {
   const page = data.extractPage({ contents: {} }, '/results?search_query=lofi+beats');
   assert.equal(page.header.title, 'lofi beats');
 });
+
+test('lockups on a channel page (no channel row) keep views and age apart from the channel', () => {
+  const l = lockup('chpage00001');
+  const rows = l.lockupViewModel.metadata.lockupMetadataViewModel.metadata.contentMetadataViewModel;
+  rows.metadataRows = [rows.metadataRows[1]]; // only "520 views · 2mo ago"
+  const [item] = data.extractItems(l);
+  assert.equal(item.channel, '');
+  assert.equal(item.views, '520 views');
+  assert.equal(item.age, '2mo ago');
+});

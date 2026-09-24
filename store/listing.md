@@ -41,12 +41,18 @@ GlassTube is an independent project. It is not affiliated with, endorsed by or s
 
 ### Graphic assets (in this folder)
 
-| Asset              | File                         | Size     |
-| ------------------ | ---------------------------- | -------- |
-| Store icon         | `store-icon-128x128.png`     | 128×128  |
-| Small promo tile   | `promo-small-440x280.png`    | 440×280  |
-| Marquee promo tile | `promo-marquee-1400x560.png` | 1400×560 |
-| Screenshots        | `screenshot-*.png`           | 1280×800 |
+Sizes follow the [Chrome Web Store image guidelines](https://developer.chrome.com/docs/webstore/images). All screenshots and tiles are opaque 24-bit PNGs.
+
+| Dashboard field                    | File                                                                 | Size              | Required                        |
+| ---------------------------------- | -------------------------------------------------------------------- | ----------------- | ------------------------------- |
+| Store icon                         | `store-icon-128x128.png` (96 px artwork + 16 px transparent padding) | 128×128           | Yes                             |
+| Screenshots (upload in this order) | `screenshot-1-*.png` … `screenshot-5-*.png`                          | 1280×800          | 1–5                             |
+| Small promo tile                   | `promo-small-440x280.png`                                            | 440×280           | Yes                             |
+| Marquee promo tile                 | `promo-marquee-1400x560.png`                                         | 1400×560          | Optional (needed for featuring) |
+| Spare screenshots                  | `extras/` (only when more than five were captured)                   | 1280×800          | —                               |
+| Logo masters (press / social)      | `brand/glasstube-logo-4096.png`, `-1024.png`, `-512.png`             | 4096 / 1024 / 512 | —                               |
+
+Screenshots feature content from the official Formula 1 YouTube channel (@Formula1).
 
 ## Privacy practices
 
@@ -56,7 +62,7 @@ GlassTube is an independent project. It is not affiliated with, endorsed by or s
 - **Remote code:** No. All code ships inside the package.
 - **Data usage:** GlassTube does not collect or transmit any user data. Tick none of the data categories.
 - **Certifications:** No sale of data · no unrelated use · no creditworthiness use.
-- **Privacy policy URL:** https://github.com/theysap/GlassTube/blob/main/PRIVACY.md
+- **Privacy policy URL:** https://github.com/theysap/GlassTube/blob/master/PRIVACY.md
 
 ## Test instructions for the reviewer
 

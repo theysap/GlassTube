@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Simplified GlassTube mark for 16–32 px: bigger screen and play glyph, no fine detail. -->
+  <defs>
+    <linearGradient id="field" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#8C7BFF"/>
+      <stop offset="0.5" stop-color="#5A3FD1"/>
+      <stop offset="1" stop-color="#241766"/>
+    </linearGradient>
+    <radialGradient id="bloom" cx="0.85" cy="0.9" r="0.6">
+      <stop offset="0" stop-color="#FF7AB6" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#FF7AB6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="232" fill="url(#field)"/>
+  <rect width="1024" height="1024" rx="232" fill="url(#bloom)"/>
+  <rect x="96" y="224" width="832" height="576" rx="140" fill="#FFFFFF" fill-opacity="0.3" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="44"/>
+  <path d="M424 360c0-26 28-42 50-28l226 140c21 13 21 43 0 56L474 668c-22 14-50-2-50-28z" fill="#FFFFFF"/>
+</svg>

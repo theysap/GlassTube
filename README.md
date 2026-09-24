@@ -51,24 +51,22 @@ A Chrome extension that turns youtube.com into a cinematic, Apple TV–inspired 
 
 ## Screenshots
 
-| Cinematic player with scrub previews                                                                    | Picture in Picture                                                                                        |
-| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| <img src="docs/screenshots/player.jpg" alt="Watch page with glass controls and a storyboard preview" /> | <img src="docs/screenshots/pip.jpg" alt="A floating Picture-in-Picture window with glass controls" />     |
-| **Channel page**                                                                                        | **Playlist as a collection**                                                                              |
-| <img src="docs/screenshots/channel.jpg" alt="Channel page with banner, avatar and tab pills" />         | <img src="docs/screenshots/playlist.jpg" alt="Playlist page with a stacked header and an episode list" /> |
-| **Shelves with focus tilt**                                                                             | **Store banner**                                                                                          |
-| <img src="docs/screenshots/shelves.jpg" alt="Shelves of videos with a focused, tilted card" />          | <img src="docs/screenshots/banner.jpg" alt="GlassTube promotional banner" />                              |
+| Cinematic player with glass controls                                                                                        | Channel page                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| <img src="docs/screenshots/player.jpg" alt="Watch page with the video filling the screen and tvOS-style glass controls" />  | <img src="docs/screenshots/channel.jpg" alt="Channel page with banner, avatar, tab pills and a featured video" /> |
+| **Playlist as a collection**                                                                                                | **Shelves and Shorts**                                                                                            |
+| <img src="docs/screenshots/playlist.jpg" alt="Playlist page with a stacked header, Play All and a numbered episode list" /> | <img src="docs/screenshots/shelves.jpg" alt="Home shelves with a focused card and a row of Shorts" />             |
 
-<sub>Screenshots show Blender Foundation open movies (CC BY) and NASA footage (public domain).</sub>
+<img src="docs/screenshots/banner.jpg" alt="GlassTube — YouTube, reimagined for the big screen" width="100%" />
+
+<sub>Screenshots feature content from the official Formula 1 YouTube channel (@Formula1).</sub>
 
 ## Install
 
-### From a GitHub Release
+### From the Chrome Web Store
 
-1. Download `glasstube-vX.Y.Z.zip` from the [latest release](https://github.com/theysap/GlassTube/releases/latest) and unzip it.
-2. Open `chrome://extensions` and switch on **Developer mode** (top right).
-3. Click **Load unpacked** and select the unzipped folder.
-4. Open [youtube.com](https://www.youtube.com) — that's it.
+Install **GlassTube** from the Chrome Web Store, then open [youtube.com](https://www.youtube.com) — that's it.
+(GitHub Releases carry release notes only; the packaged extension is distributed through the store.)
 
 ### From source
 
@@ -160,17 +158,17 @@ npm run smoke        # drive real youtube.com with the extension loaded (Chrome 
 npm run build        # dist/glasstube-vX.Y.Z.zip
 ```
 
-| Script                     | Purpose                                                                         |
-| -------------------------- | ------------------------------------------------------------------------------- |
-| `npm run lint`             | ESLint, Stylelint and Prettier (check)                                          |
-| `npm run format`           | Prettier (write)                                                                |
-| `npm test`                 | Node's built-in test runner over `tests/`                                       |
-| `npm run validate`         | Manifest shape, referenced files, version sync, changelog entry, no remote code |
-| `npm run smoke -- <url …>` | Screenshots + a JSON report per URL into `dist/smoke/` (`HEADFUL=1` to watch)   |
-| `npm run build`            | Deterministic zip in `dist/`                                                    |
-| `npm run release:local`    | Full Chrome Web Store bundle into `chrome/vX.Y.Z/` (see below)                  |
-| `npm run bump -- x.y.z`    | Set the version in `package.json`, `package-lock.json` and the manifest         |
-| `npm run assets`           | Re-render the PNG icons from `assets/icon.svg`                                  |
+| Script                     | Purpose                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| `npm run lint`             | ESLint, Stylelint and Prettier (check)                                                 |
+| `npm run format`           | Prettier (write)                                                                       |
+| `npm test`                 | Node's built-in test runner over `tests/`                                              |
+| `npm run validate`         | Manifest shape, referenced files, version sync, changelog entry, no remote code        |
+| `npm run smoke -- <url …>` | Screenshots + a JSON report per URL into `dist/smoke/` (`HEADFUL=1` to watch)          |
+| `npm run build`            | Deterministic zip in `dist/`                                                           |
+| `npm run release:local`    | Full Chrome Web Store bundle into `chrome/vX.Y.Z/` (see below)                         |
+| `npm run bump -- x.y.z`    | Set the version in `package.json`, `package-lock.json` and the manifest                |
+| `npm run assets`           | Re-render the PNG icons from `assets/logo.svg` (add `-- --brand <dir>` for 4K masters) |
 
 ### Project layout
 
@@ -185,7 +183,7 @@ src/                     ← the extension (load this folder unpacked)
 scripts/                 build, zip, validate, bump, smoke, screenshots, release notes, hooks
 tests/                   unit tests + trimmed YouTube JSON fixtures
 store/listing.md         Chrome Web Store copy template
-assets/icon.svg          icon source
+assets/logo.svg          logo source (logo-small.svg: simplified 16–32 px mark)
 docs/screenshots/        README images
 .github/                 CI + release workflows, issue / PR templates
 .husky/                  pre-commit & commit-msg hooks
@@ -194,14 +192,14 @@ docs/screenshots/        README images
 ### Git hooks and conventions
 
 - **pre-commit** — refuses anything under `chrome/`, runs lint-staged (ESLint / Stylelint / Prettier on staged files), the unit tests and the validator.
-- **commit-msg** — the subject must be `vX.Y.Z: summary` and match the version in `package.json`; `Co-authored-by` trailers are rejected.
+- **commit-msg** — the subject must be exactly `vX.Y.Z`, matching the version in `package.json`, with any details in the commit body; `Co-authored-by` trailers are rejected.
 - Every commit bumps the version (`npm run bump -- x.y.z`) and adds a matching section to [CHANGELOG.md](CHANGELOG.md) (Keep a Changelog format).
 
 ## Releasing
 
 Public releases (e.g. `v1.0.0`) are cut after testing — ordinary commits are versioned but not released.
 
-1. `npm run bump -- 1.0.0`, write the `## [1.0.0]` section in `CHANGELOG.md`, commit `v1.0.0: …`.
+1. `npm run bump -- 1.0.0`, write the `## [1.0.0]` section in `CHANGELOG.md`, commit with the subject `v1.0.0`.
 2. `npm run release:local` — builds **`chrome/v1.0.0/`** for the Chrome Web Store:
 
    | File                         | Use                                                                                    |
@@ -210,17 +208,19 @@ Public releases (e.g. `v1.0.0`) are cut after testing — ordinary commits are v
    | `store-icon-128x128.png`     | Store icon                                                                             |
    | `promo-small-440x280.png`    | Small promo tile                                                                       |
    | `promo-marquee-1400x560.png` | Marquee promo tile                                                                     |
-   | `screenshot-1…6-*.png`       | 1280×800 screenshots (pick up to five)                                                 |
+   | `screenshot-1…5-*.png`       | Five 1280×800 screenshots, opaque PNG (a spare one is in `extras/`)                    |
+   | `brand/`                     | 4096 / 1024 / 512 px logo masters                                                      |
    | `store-listing.md`           | Name, summary, description, permission justifications, privacy answers, reviewer notes |
    | `privacy-policy.md`          | Privacy policy text                                                                    |
 
-   `chrome/` is git-ignored and blocked by the pre-commit hook — it never reaches the repository.
+   `chrome/` (zip, store images, 4K logo) is git-ignored and blocked by the pre-commit hook — it never reaches the repository.
 
-3. `git tag v1.0.0 && git push origin main --tags` — the **Release** workflow re-runs every check, confirms the tag matches the manifest, builds the zip and publishes a GitHub Release with notes taken from the changelog.
+3. Upload `chrome/v1.0.0/glasstube-v1.0.0.zip` and the listing assets in the Chrome Web Store Developer Dashboard.
+4. `git tag v1.0.0 && git push origin master --tags` — the **Release** workflow re-runs every check, confirms the tag matches the manifest and publishes a GitHub Release with notes from the changelog. **No zip is attached** — the zip is only for the Chrome Web Store.
 
 ### CI
 
-[`ci.yml`](.github/workflows/ci.yml) runs on every push and pull request: lint, unit tests, validation, the commit-message convention for the pushed range, and a build whose zip is attached as a workflow artifact.
+[`ci.yml`](.github/workflows/ci.yml) runs on every push and pull request: lint, unit tests, validation, the commit-message convention for the pushed range, and a build check (the zip is not uploaded anywhere).
 
 ## Troubleshooting
 

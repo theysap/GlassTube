@@ -1,4 +1,5 @@
-// Enforces the commit message convention: "vX.Y.Z: summary", matching the staged version.
+// Enforces the commit message convention: the subject is exactly "vX.Y.Z" (the staged version);
+// any details go in the commit body.
 import { readFileSync } from 'node:fs';
 import { pkg } from './lib.mjs';
 
@@ -11,9 +12,9 @@ const version = pkg().version;
 if (/^(Merge|Revert|fixup!|squash!)/.test(subject)) process.exit(0);
 
 const errors = [];
-const match = subject.match(/^v(\d+\.\d+\.\d+)(?::\s+\S.*)?$/);
+const match = subject.match(/^v(\d+\.\d+\.\d+)$/);
 if (!match) {
-  errors.push(`Subject must look like "v${version}: short summary" — got "${subject}".`);
+  errors.push(`Subject must be exactly "v${version}" (details go in the body) — got "${subject}".`);
 } else if (match[1] !== version) {
   errors.push(`Subject version v${match[1]} does not match package.json version v${version}.`);
 }

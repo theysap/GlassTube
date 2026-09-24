@@ -4,8 +4,9 @@ node_modules/
 # Build output
 dist/
 
-# Chrome Web Store release bundles (zip + listing assets) — never committed
+# Chrome Web Store release bundles (zip, 4K logo, store images) — never committed
 chrome/
+assets/brand/
 
 # OS / editor
 .DS_Store

@@ -21,9 +21,14 @@ const check = (message) => {
 
 const v = pkg().version;
 
-test('accepts the current version with a summary', () => {
-  assert.equal(check(`v${v}: add a thing\n\nbody`), true);
+test('accepts the bare current version, with or without a body', () => {
   assert.equal(check(`v${v}`), true);
+  assert.equal(check(`v${v}\n\nAdd a thing.`), true);
+});
+
+test('rejects a summary on the subject line', () => {
+  assert.equal(check(`v${v}: add a thing`), false);
+  assert.equal(check(`v${v} add a thing`), false);
 });
 
 test('rejects messages without the version prefix', () => {
@@ -32,9 +37,9 @@ test('rejects messages without the version prefix', () => {
 });
 
 test('rejects a version that does not match package.json', () => {
-  assert.equal(check('v99.0.0: future'), false);
+  assert.equal(check('v99.0.0'), false);
 });
 
 test('rejects co-author trailers', () => {
-  assert.equal(check(`v${v}: thing\n\nCo-authored-by: Someone <a@b.c>`), false);
+  assert.equal(check(`v${v}\n\nThing.\n\nCo-authored-by: Someone <a@b.c>`), false);
 });

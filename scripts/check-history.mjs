@@ -1,5 +1,5 @@
-// CI guard: every commit in a range must use "vX.Y.Z: summary" and carry no co-author trailer.
-//   node scripts/check-history.mjs <base>..<head>
+// CI guard: every commit in a range must have the subject "vX.Y.Z" and carry no co-author trailer.
+//   node scripts/check-history.mjs <base>..<head>   (or a single ref for its whole history)
 import { execFileSync } from 'node:child_process';
 
 const range = process.argv[2];
@@ -17,8 +17,8 @@ for (const entry of log
   .filter(Boolean)) {
   const [sha, subject, body = ''] = entry.split('\x1f');
   if (/^(Merge|Revert)/.test(subject)) continue;
-  if (!/^v\d+\.\d+\.\d+(?::\s+\S.*)?$/.test(subject)) {
-    errors.push(`${sha.slice(0, 7)} subject is not "vX.Y.Z: summary": ${subject}`);
+  if (!/^v\d+\.\d+\.\d+$/.test(subject)) {
+    errors.push(`${sha.slice(0, 7)} subject is not "vX.Y.Z": ${subject}`);
   }
   if (/^co-authored-by:/im.test(body))
     errors.push(`${sha.slice(0, 7)} has a Co-authored-by trailer`);

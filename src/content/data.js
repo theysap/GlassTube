@@ -157,8 +157,10 @@
     const parts = rows.map((row) =>
       (row.metadataParts || []).map((p) => text(p.text)).filter(Boolean),
     );
-    const [channel = ''] = parts[0] || [];
-    const [views = '', age = ''] = parts.slice(1).flat();
+    // Feeds put the channel on its own first row; a channel's own pages omit it and start
+    // straight with "views · age", so a lone row is never treated as the channel.
+    const [channel = ''] = parts.length > 1 ? parts[0] : [];
+    const [views = '', age = ''] = (parts.length > 1 ? parts.slice(1) : parts).flat();
     const badges = findAll(l.contentImage, (v, k) => k === 'thumbnailBadgeViewModel');
     const badgeTexts = badges.map((b) => text(b.text));
     const live = badges.some((b) => /LIVE/.test(b.badgeStyle || '')) || badgeTexts.some(isLiveText);

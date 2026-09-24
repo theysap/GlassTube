@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
 
 permissions:
@@ -43,15 +43,15 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             node scripts/check-history.mjs "origin/${{ github.base_ref }}..HEAD"
-          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ] &&
+            git cat-file -e "${{ github.event.before }}^{commit}" 2>/dev/null; then
             node scripts/check-history.mjs "${{ github.event.before }}..${{ github.sha }}"
+          else
+            # First push, or a force-push whose previous head is gone: check the whole history.
+            node scripts/check-history.mjs "${{ github.sha }}"
           fi
 
-      - name: Build extension zip
+      # The zip is built only to prove the package assembles; it is never published from CI —
+      # store zips are produced locally for the Chrome Web Store (npm run release:local).
+      - name: Build check
         run: npm run build
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: glasstube-${{ github.sha }}
-          path: dist/*.zip
-          if-no-files-found: error

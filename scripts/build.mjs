@@ -11,6 +11,7 @@ import {
 } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { ROOT, SRC, manifest, changelogSection } from './lib.mjs';
+import { execFileSync } from 'node:child_process';
 import { createZip } from './zip.mjs';
 
 const withStore = process.argv.includes('--store');
@@ -40,6 +41,14 @@ if (withStore) {
   mkdirSync(out, { recursive: true });
   writeFileSync(join(out, zipName), zip);
   copyFileSync(join(SRC, 'icons/icon128.png'), join(out, 'store-icon-128x128.png'));
+  // 4K / 1024 / 512 logo masters for the listing, social posts and press — never committed.
+  execFileSync(
+    process.execPath,
+    [join(ROOT, 'scripts/generate-assets.mjs'), '--brand', relative(ROOT, join(out, 'brand'))],
+    {
+      stdio: 'inherit',
+    },
+  );
 
   const listing = readFileSync(join(ROOT, 'store/listing.md'), 'utf8')
     .replaceAll('{{version}}', version)

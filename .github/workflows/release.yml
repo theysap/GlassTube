@@ -1,6 +1,8 @@
 name: Release
 
 # Public releases only: push a tag such as v1.0.0 (see "Releasing" in the README).
+# The release carries notes only — the extension zip is for the Chrome Web Store and is
+# never attached here.
 on:
   push:
     tags: ['v*.*.*']
@@ -33,7 +35,7 @@ jobs:
             exit 1
           fi
 
-      - name: Build extension zip
+      - name: Build check
         run: npm run build
 
       - name: Release notes from CHANGELOG.md
@@ -43,7 +45,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/glasstube-*.zip \
-            --title "GlassTube $GITHUB_REF_NAME" \
-            --notes-file dist/RELEASE_NOTES.md \
-            --verify-tag
+          # A re-pushed tag updates the existing release instead of failing on it.
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --title "GlassTube $GITHUB_REF_NAME" \
+              --notes-file dist/RELEASE_NOTES.md
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "GlassTube $GITHUB_REF_NAME" \
+              --notes-file dist/RELEASE_NOTES.md \
+              --verify-tag
+          fi

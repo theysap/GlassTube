@@ -38,7 +38,7 @@ Everything you need to get the most out of GlassTube — what each part does, ev
 
 ## Getting started
 
-1. Install GlassTube (from the Chrome Web Store, or **Load unpacked** from a release zip — see the [README](README.md#install)).
+1. Install GlassTube from the Chrome Web Store (or run it from source — see the [README](README.md#install)).
 2. Pin it: click the puzzle-piece icon in Chrome's toolbar and pin **GlassTube** so its popup is one click away.
 3. Open [youtube.com](https://www.youtube.com). If YouTube was already open, **reload the tab** once so GlassTube can start.
 4. For the best look, **maximise the window** or go full screen (<kbd>F11</kbd> on Windows/Linux, <kbd>⌃</kbd><kbd>⌘</kbd><kbd>F</kbd> on macOS).
