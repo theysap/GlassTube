@@ -65,6 +65,8 @@
     .glyph svg { width: 1em; height: 1em; }
     .glyph.flash { animation: glyph .7s cubic-bezier(.2,.8,.2,1) both; }
     @keyframes glyph { 0% { opacity: 0; transform: scale(.7) } 25% { opacity: 1; transform: scale(1) } 100% { opacity: 0; transform: scale(1.15) } }
+    body.solid .btn, body.solid .glyph { background: #2c2c32; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    body.solid .scrim { background: linear-gradient(180deg, rgba(0,0,0,.8), rgba(0,0,0,.3) 30%, rgba(0,0,0,.3) 60%, rgba(0,0,0,.9)); }
     @media (max-height: 200px) { .center { gap: 12px } .btn.big { width: 46px; height: 46px; font-size: 22px } .title { display: none } }
   `;
 
@@ -111,6 +113,7 @@
       return n;
     };
 
+    d.body.classList.toggle('solid', !!GT.settings.reduceTransparency);
     const stage = el('div', 'stage');
     stage.append(v);
 

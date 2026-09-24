@@ -635,11 +635,16 @@ a.gt-row-title:focus-visible {
   display: flex;
   gap: 10px;
   align-items: center;
-  height: 48px;
-  padding: 0 20px 0 12px;
+  height: 50px;
+  padding: 0 22px 0 12px;
   border-radius: 999px;
-  color: var(--gt-text);
-  font: 600 15px/1 var(--gt-font);
+  color: #000;
+  font: 700 15px/1 var(--gt-font);
+  background: #f5f5f7 !important;
+  border: none !important;
+  box-shadow:
+    0 18px 40px -10px rgb(0 0 0 / 75%),
+    0 0 0 1px rgb(255 255 255 / 40%) !important;
   cursor: pointer;
   transition: transform 0.3s var(--gt-spring);
 }
@@ -815,4 +820,54 @@ a.gt-row-title:focus-visible {
   padding-top: 20px;
   color: var(--gt-text-3);
   font-size: 13px;
+}
+
+/* ── Calm Top Shelf: soothing gradient + framed poster instead of full-bleed art ── */
+.gt-hero-calm {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(70% 90% at 78% 40%, var(--gt-calm-b), transparent 70%),
+    radial-gradient(60% 80% at 15% 85%, var(--gt-calm-a), transparent 75%),
+    linear-gradient(160deg, var(--gt-calm-a), var(--gt-calm-c));
+}
+
+.gt-hero-poster {
+  position: absolute;
+  top: 50%;
+  right: max(var(--gt-right), 4vw);
+  width: min(46vw, 860px);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 26px;
+  box-shadow:
+    0 50px 100px -30px rgb(0 0 0 / 80%),
+    0 0 0 1px rgb(255 255 255 / 14%);
+  transform: translateY(-58%);
+}
+
+.gt-hero-poster .gt-hero-img {
+  transform: none;
+}
+
+.gt-hero-poster .gt-glare {
+  opacity: 0.6;
+}
+
+.gt-hero.gt-hero-calm-mode .gt-hero-content {
+  max-width: min(40vw, 640px);
+}
+
+.gt-hero.gt-hero-calm-mode .gt-hero-scrim {
+  background: linear-gradient(90deg, rgb(0 0 0 / 35%) 0%, transparent 45%);
+}
+
+.gt-ambient-calm {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 70% at 70% 20%, var(--gt-calm-b), transparent 70%),
+    linear-gradient(180deg, var(--gt-calm-a), var(--gt-bg) 80%);
+  opacity: 0.45;
+  transition: background 1.2s var(--gt-ease);
 }

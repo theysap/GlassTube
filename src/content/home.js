@@ -120,8 +120,36 @@
   };
 
   // ── Hero (Top Shelf) ────────────────────────────────────────────────────
-  const heroSlide = (item) =>
-    GT.ui.img(GT.ui.thumbSources(item, true), { cls: 'gt-hero-img', eager: true, minWidth: 400 });
+  // Soft, dark gradients for the "Calm" Top Shelf — picked per video so slides still vary.
+  const CALM = [
+    ['#1b2a4a', '#3c3160', '#0f1a2e'],
+    ['#12303a', '#1f5160', '#0b1d24'],
+    ['#2a1f3d', '#553a5e', '#160f22'],
+    ['#1c2e2a', '#35584a', '#0e1a17'],
+    ['#2e2530', '#5a4150', '#18121a'],
+    ['#1a2238', '#2e4b70', '#0d1322'],
+  ];
+  const calmColors = (item) => {
+    let hash = 0;
+    for (const ch of item.id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+    const [a, b, c] = CALM[hash % CALM.length];
+    return { '--gt-calm-a': a, '--gt-calm-b': b, '--gt-calm-c': c };
+  };
+  const isCalm = () => GT.settings.heroStyle === 'calm';
+
+  const heroSlide = (item) => {
+    const art = GT.ui.img(GT.ui.thumbSources(item, true), {
+      cls: 'gt-hero-img',
+      eager: true,
+      minWidth: 400,
+    });
+    if (!isCalm()) return art;
+    return h(
+      'div.gt-hero-calm',
+      { style: calmColors(item) },
+      h('div.gt-hero-poster', art, h('div.gt-glare')),
+    );
+  };
 
   const renderHeroContent = () => {
     const items = heroItems();
@@ -136,7 +164,11 @@
       d.setAttribute('aria-current', i === heroIndex ? 'true' : 'false');
     });
     const ambient = layer.querySelector('.gt-ambient');
-    ambient.replaceChildren(GT.ui.img([GT.data.thumbUrl(item.id, 'mqdefault'), item.thumb]));
+    ambient.replaceChildren(
+      isCalm()
+        ? h('div.gt-ambient-calm', { style: calmColors(item) })
+        : GT.ui.img([GT.data.thumbUrl(item.id, 'mqdefault'), item.thumb]),
+    );
 
     const watch = new URL(item.url || `/watch?v=${item.id}`, location.origin).href;
     const content = h(
@@ -202,8 +234,9 @@
 
   const renderHero = () => {
     const items = heroItems();
-    const ids = items.map((i) => i.id).join();
+    const ids = items.map((i) => i.id).join() + `|${GT.settings.heroStyle}`;
     const hero = layer.querySelector('.gt-hero');
+    hero.classList.toggle('gt-hero-calm-mode', isCalm());
     hero.classList.toggle('gt-hero-empty', !items.length);
     if (ids === heroIds) return;
     heroIds = ids;
@@ -420,7 +453,9 @@
     mount: build,
     unmount: teardown,
     update: () => {
-      if (layer) restartHeroTimer();
+      if (!layer) return;
+      renderHero(); // picks up a changed Top Shelf style
+      restartHeroTimer();
     },
   });
 

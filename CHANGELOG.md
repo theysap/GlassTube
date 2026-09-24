@@ -3,6 +3,22 @@
 All notable changes to GlassTube are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/). Every commit is versioned (`vX.Y.Z: summary`); public releases (e.g. `v1.0.0`) are published as GitHub Releases with a Chrome Web Store bundle.
 
+## [0.8.0] - 2026-09-24
+
+### Added
+
+- **Top Shelf Background** setting (Artwork / Calm). Calm swaps busy full-bleed thumbnails for a soothing gradient with the artwork framed as a poster, and a matching calm glow behind the shelves.
+- Segmented controls in the popup for multi-choice settings.
+
+### Fixed
+
+- **Reduce Transparency** now makes every glass surface solid (sidebar, buttons, player controls, menus, tabs, badges, search, PiP window) — previously it only removed the blur, which left surfaces looking more see-through.
+- Video titles no longer render condensed (YouTube's `font-stretch`) or get clipped/overlapped when long; they wrap to up to three lines.
+- The speed button's icon sat off-centre when hovered.
+- Sidebar icons are exactly centred in the collapsed pill.
+- The “GlassTube Home / View” return pill is now a bright, clearly visible button on YouTube's native pages.
+- The popup no longer stretches wider than its content (it is centred at 360 px).
+
 ## [0.7.0] - 2026-09-24
 
 ### Added
@@ -87,6 +103,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Build script producing a deterministic store zip, plus `chrome/vX.Y.Z/` release folders (git-ignored) with the zip, store icon, listing copy and privacy policy.
 - Tooling: ESLint, Stylelint, Prettier, Husky + lint-staged pre-commit checks, a commit message guard (`vX.Y.Z: summary`) and a manifest / version validator.
 
+[0.8.0]: https://github.com/theysap/GlassTube/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/theysap/GlassTube/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/theysap/GlassTube/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/theysap/GlassTube/compare/v0.4.0...v0.5.0

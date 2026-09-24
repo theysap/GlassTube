@@ -54,6 +54,8 @@ html.gt-watch-active ytd-watch-flexy:not(:has(ytd-live-chat-frame)) #primary {
 }
 
 html.gt-watch-active ytd-watch-metadata #title h1 {
+  max-height: none !important;
+  -webkit-line-clamp: 3 !important;
   font-size: clamp(26px, 2.4vw, 42px) !important;
   font-weight: 800 !important;
   line-height: 1.12 !important;
@@ -369,6 +371,10 @@ html.gt-on .ytp-popup {
 .gt-cbtn-label {
   font-size: 13px;
   font-weight: 800;
+}
+
+.gt-cbtn-label:empty {
+  display: none;
 }
 
 .gt-cbtn:has(.gt-cbtn-label:not(:empty)) .gt-icon {

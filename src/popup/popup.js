@@ -11,6 +11,7 @@ const DEFAULTS = {
   pages: true,
   shorts: true,
   reduceTransparency: false,
+  heroStyle: 'artwork',
 };
 
 const GROUPS = [
@@ -37,6 +38,16 @@ const GROUPS = [
   {
     title: 'Home',
     options: [
+      {
+        key: 'heroStyle',
+        label: 'Top Shelf Background',
+        hint: 'Full artwork, or a calm colour with a framed poster',
+        choices: [
+          ['artwork', 'Artwork'],
+          ['calm', 'Calm'],
+        ],
+        requires: 'home',
+      },
       {
         key: 'heroRotate',
         label: 'Auto-rotate Top Shelf',
@@ -77,6 +88,31 @@ const el = (tag, props = {}, ...children) => {
   return node;
 };
 
+/** A tvOS-style segmented control for options with a few named values. */
+const choiceRow = (opt, settings) => {
+  const segs = el('div', { className: 'segmented', role: 'radiogroup' });
+  segs.setAttribute('aria-label', opt.label);
+  for (const [value, label] of opt.choices) {
+    const b = el('button', { type: 'button', className: 'seg' }, label);
+    b.setAttribute('role', 'radio');
+    b.setAttribute('aria-checked', String(settings[opt.key] === value));
+    b.addEventListener('click', () => {
+      settings[opt.key] = value;
+      chrome.storage.sync.set({ [opt.key]: value });
+      segs.querySelectorAll('.seg').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+    });
+    segs.append(b);
+  }
+  const row = el(
+    'div',
+    { className: 'row row-choice' },
+    el('span', { className: 'row-text' }, el('strong', {}, opt.label), el('small', {}, opt.hint)),
+    segs,
+  );
+  if (opt.requires) row.dataset.requires = opt.requires;
+  return row;
+};
+
 const render = (settings) => {
   const groups = document.getElementById('groups');
   groups.replaceChildren(
@@ -89,6 +125,7 @@ const render = (settings) => {
           'div',
           { className: 'card glass' },
           ...group.options.map((opt) => {
+            if (opt.choices) return choiceRow(opt, settings);
             const input = el('input', { type: 'checkbox', className: 'switch' });
             input.dataset.key = opt.key;
             input.checked = !!settings[opt.key];

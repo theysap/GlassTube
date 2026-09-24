@@ -20,6 +20,7 @@
     pages: true,
     shorts: true,
     reduceTransparency: false,
+    heroStyle: 'artwork',
   });
 
   GT.settings = { ...GT.DEFAULTS };
